@@ -7,19 +7,6 @@
 
 > **Need help running this project or want an updated version?**  
 > 📱 **Telegram**: [t.me/dexoryn](https://t.me/dexoryn) | 🎮 **Discord**: `dexoryn_`
-
-<table>
-  <tr>
-    <td align="center">
-      <img src="dexoryn_tg.jpg" alt="Telegram QR Code" width="250"/>
-      <br><b>Telegram: @dexoryn</b>
-    </td>
-    <td align="center">
-      <img src="dexoryn_wechat.png" alt="WeChat QR Code" width="250"/>
-      <br><b>WeChat: DexorynWe</b>
-    </td>
-  </tr>
-</table>
 ---
 
 ## 🎥 Live Profit Videos : **Copy trading Gabagool22**  
@@ -299,3 +286,20 @@ If you find this Polymarket bot, Polymarket trading bot, or Polymarket copy trad
 ---
 
 **🔍 Search Terms:** This is the best Polymarket bot, top Polymarket trading bot, and most advanced Polymarket copy trading bot available. Looking for a Polymarket bot? This Polymarket trading bot is production-ready with real profit proof. Need a Polymarket copy trading bot? This is it.
+
+---
+
+## 📱 Contact QR Codes
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="dexoryn_tg.jpg" alt="Telegram QR Code" height="300"/>
+      <br><b>Telegram: @dexoryn</b>
+    </td>
+    <td align="center">
+      <img src="dexoryn_wechat.png" alt="WeChat QR Code" height="300"/>
+      <br><b>WeChat: DexorynWe</b>
+    </td>
+  </tr>
+</table>
