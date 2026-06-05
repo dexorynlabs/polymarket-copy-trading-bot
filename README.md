@@ -6,7 +6,20 @@
 **🔍 Search Keywords:** `polymarket bot`, `polymarket trading bot`, `polymarket copy trading bot`, `polymarket copy trading`, `automated polymarket trading`, `polymarket trading automation`, `polymarket prediction markets bot`, `best polymarket bot`, `top polymarket trading bot`
 
 > **Need help running this project or want an updated version?**  
-> 📱 **Telegram**: [t.me/dexoryn_here](https://t.me/dexoryn_here) | 🎮 **Discord**: `.dexoryn` 
+> 📱 **Telegram**: [t.me/dexoryn](https://t.me/dexoryn) | 🎮 **Discord**: `dexoryn_`
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="dexoryn_tg.jpg" alt="Telegram QR Code" width="250"/>
+      <br><b>Telegram: @dexoryn</b>
+    </td>
+    <td align="center">
+      <img src="dexoryn_wechat.png" alt="WeChat QR Code" width="250"/>
+      <br><b>WeChat: DexorynWe</b>
+    </td>
+  </tr>
+</table>
 ---
 
 ## 🎥 Live Profit Videos : **Copy trading Gabagool22**  
@@ -154,7 +167,7 @@ python -m src.scripts.setup.system_status
 python -m src.main
 ```
 
-**💡 Need help?** Contact [@dexoryn_here](https://t.me/dexoryn_here) on Telegram for Polymarket bot setup assistance or updated Polymarket trading bot versions.
+**💡 Need help?** Contact [@dexoryn](https://t.me/dexoryn) on Telegram for Polymarket bot setup assistance or updated Polymarket trading bot versions.
 
 ---
 
@@ -200,7 +213,7 @@ Create a `.env` file with the following variables:
 5. Know how to stop the bot quickly (Ctrl+C)
 6. Run system status check before starting: `python -m src.scripts.setup.system_status`
 
-**💡 Need Help?** Contact [@dexoryn_here](https://t.me/dexoryn_here) on Telegram for Polymarket bot setup assistance or updated Polymarket trading bot versions.
+**💡 Need Help?** Contact [@dexoryn](https://t.me/dexoryn) on Telegram for Polymarket bot setup assistance or updated Polymarket trading bot versions.
 
 ---
 
@@ -240,8 +253,8 @@ We specialize in building the most advanced **Polymarket bot**, **Polymarket tra
 
 **Reach out through any of these channels:**
 
-- **💬 Telegram**: [@dexoryn_here](https://t.me/dexoryn_here) - *Fastest response for Polymarket bot support*
-- **🎮 Discord**: `.dexoryn` - *Connect for Polymarket bot discussions and community*
+- **💬 Telegram**: [@dexoryn](https://t.me/dexoryn) - *Fastest response for Polymarket bot support*
+- **🎮 Discord**: `dexoryn_` - *Connect for Polymarket bot discussions and community*
 - **🐦 Twitter**: [@dexoryn](https://x.com/dexoryn) - *Follow for Polymarket trading bot updates*
 - **💻 GitHub**: [@dexorynLabs](https://github.com/dexorynLabs) - *View Polymarket bot source code and contribute*
 
@@ -279,7 +292,7 @@ If you find this Polymarket bot, Polymarket trading bot, or Polymarket copy trad
 - 🐛 **Reporting issues** - Help improve the Polymarket trading bot by reporting bugs
 - 🤝 **Contributing** - Submit pull requests to enhance the Polymarket copy trading bot
 
-**Need help or updated version?** Contact [@dexoryn_here](https://t.me/dexoryn_here) on Telegram.
+**Need help or updated version?** Contact [@dexoryn](https://t.me/dexoryn) on Telegram.
 
 **Your support helps make Polymarket bot trading more accessible to everyone!**
 
