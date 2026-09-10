@@ -1,4 +1,4 @@
-"""Trader — batching accumulator, translator, sizing, PositionTracker.
+"""Trader - batching accumulator, translator, sizing, PositionTracker.
 
 Decision pipeline per target fill:
   consume_chunk_if_ready → sizing → translate → clob.place_order
@@ -22,7 +22,7 @@ CLOB_MIN_SHARES = 5.0
 # PM binary outcome: price ∈ (0, 1) exclusive of $1. The highest valid limit is
 # (1 - tick). Hardcoded exact values avoid float-imprecision from `1.0 - tick`:
 #   1.0 - 0.001 → 0.999 (usually safe but not guaranteed bit-exact)
-#   1.0 - 0.0001 → 0.9999 (also fine — but kept explicit for clarity).
+#   1.0 - 0.0001 → 0.9999 (also fine - but kept explicit for clarity).
 TICK_MAX_PRICE = {
     0.01:   0.99,
     0.001:  0.999,
@@ -119,7 +119,7 @@ class Trader:
             PositionEntry(**p) for p in state.get("positions", [])
         ]
         self._state_dirty = False
-        # Background tasks (Gamma endDate fetches) — held to prevent GC and
+        # Background tasks (Gamma endDate fetches) - held to prevent GC and
         # cancelled cleanly on shutdown.
         self._bg_tasks: set[asyncio.Task] = set()
 
@@ -173,7 +173,7 @@ class Trader:
     def stage_chunk_if_ready(self, target_fill: TargetFill) -> Optional[float]:
         """
         Always commits the new fill into the buffer (bounded by BUFFER_CAP).
-        Returns chunk_shares if buffer has crossed threshold — but does NOT
+        Returns chunk_shares if buffer has crossed threshold - but does NOT
         reset. Caller must call commit_copied_chunk() after a successful POST
         /order to reset the buffer; if POST fails, buffer stays so the next
         fill keeps building. Buffer is capped at threshold×BUFFER_CAP_MULTIPLIER
@@ -201,12 +201,12 @@ class Trader:
 
         log.info(
             f"[CHUNK] asset={asset[:12]}… chunk={new_acc:.2f} shares "
-            f"(threshold {threshold} crossed — pending POST result)"
+            f"(threshold {threshold} crossed - pending POST result)"
         )
         return new_acc
 
     def commit_copied_chunk(self, asset: str) -> None:
-        """Called after a successful POST /order — reset buffer to 0 for that asset."""
+        """Called after a successful POST /order - reset buffer to 0 for that asset."""
         if asset in self.target_buy_accumulator:
             self.target_buy_accumulator[asset] = 0.0
             self._state_dirty = True
@@ -249,7 +249,7 @@ class Trader:
             return None
 
         # Taker: limit = target_price * (1 + slippage_bps/10000)
-        # Maker: limit = target_price + offset_ticks * tick (forced below best_ask via book check is skipped — we don't query book)
+        # Maker: limit = target_price + offset_ticks * tick (forced below best_ask via book check is skipped - we don't query book)
         order_type_cfg = self.config["execution"]["order_type"]
         tick = infer_tick_from_price(target_fill.price_str)
 
@@ -328,14 +328,14 @@ class Trader:
         t_post_done = int(time.time() * 1000)
 
         if not result.success:
-            # POST failed — buffer keeps the chunk; next fill keeps building
+            # POST failed - buffer keeps the chunk; next fill keeps building
             # from the same baseline so we retry on the next fill that arrives.
             return
 
-        # POST succeeded — commit the buffer reset for this asset.
+        # POST succeeded - commit the buffer reset for this asset.
         self.commit_copied_chunk(spec.asset_id)
 
-        # Single consolidated log line — replaces clob.py's [COPY]/[DRY-RUN] +
+        # Single consolidated log line - replaces clob.py's [COPY]/[DRY-RUN] +
         # the previous separate [LATENCY] line.
         tag = "DRY-RUN" if result.dry_run else "COPY"
         usd = spec.size * spec.price
@@ -397,7 +397,7 @@ class Trader:
         )
 
     async def cancel_bg_tasks(self) -> None:
-        """Cancel any in-flight Gamma fetches — call before closing aiohttp session."""
+        """Cancel any in-flight Gamma fetches - call before closing aiohttp session."""
         for t in list(self._bg_tasks):
             t.cancel()
         if self._bg_tasks:

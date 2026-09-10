@@ -1,4 +1,4 @@
-"""app-tracecopy — Polymarket copy-trader entrypoint.
+"""app-tracecopy - Polymarket copy-trader entrypoint.
 
 Loads config, validates, wires Poller + Trader + ClobClient, runs asyncio loop.
 
@@ -131,7 +131,7 @@ def load_state() -> dict:
         return json.loads(p.read_text())
     except Exception as e:
         log = logging.getLogger("main")
-        log.warning(f"Failed to load {STATE_FILE}: {e} — starting fresh")
+        log.warning(f"Failed to load {STATE_FILE}: {e} - starting fresh")
         return {}
 
 
@@ -147,7 +147,7 @@ def save_state(poller: Poller, trader: Trader) -> None:
 
 async def state_saver(poller: Poller, trader: Trader, shutdown: asyncio.Event) -> None:
     # `save_state` does JSON serialization + atomic file replace. With large
-    # seen_tx_keys (50k+) it can spend 50-100ms — push to a thread so the
+    # seen_tx_keys (50k+) it can spend 50-100ms - push to a thread so the
     # WS receive loop doesn't stall.
     while not shutdown.is_set():
         try:
@@ -201,7 +201,7 @@ async def amain() -> int:
     log = logging.getLogger("main")
 
     if not os.path.exists(CONFIG_FILE):
-        log.error(f"{CONFIG_FILE} not found — copy config.yaml.example and edit")
+        log.error(f"{CONFIG_FILE} not found - copy config.yaml.example and edit")
         return 2
 
     with open(CONFIG_FILE) as f:
@@ -215,7 +215,7 @@ async def amain() -> int:
 
     mode = cfg["mode"]
     log.info("=" * 60)
-    log.info(f"app-tracecopy starting — mode={mode.upper()}")
+    log.info(f"app-tracecopy starting - mode={mode.upper()}")
     log.info(f"  target_wallet:  {cfg['target_wallet']}")
     log.info(f"  data source:    WebSocket wss://ws-live-data.polymarket.com")
     log.info(f"  sizing.mode:    {cfg['sizing']['mode']}")

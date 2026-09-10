@@ -1,10 +1,10 @@
-"""Poller — WebSocket subscription to PM activity/trades, dedup, watchdog.
+"""Poller - WebSocket subscription to PM activity/trades, dedup, watchdog.
 
 Subscribes once to the global activity/trades stream and filters incoming
 events by `proxyWallet` to match the target. App-level `Text("PING")` heartbeat
 every 5s (matches PM convention). Fills are dispatched to a bounded asyncio
 Queue so the WS receive loop never blocks on `on_fill` (POST /order). PM WS
-connections become zombie after ~20 minutes of silence — the silent watchdog
+connections become zombie after ~20 minutes of silence - the silent watchdog
 raises to force a supervisor restart.
 """
 
@@ -30,7 +30,7 @@ log = logging.getLogger("poller")
 
 
 def _full_row_key(p: dict) -> str:
-    """Dedup key: tx_hash + asset + side + size + price (full row, not just tx_hash —
+    """Dedup key: tx_hash + asset + side + size + price (full row, not just tx_hash -
     one taker × N makers produces N rows sharing tx_hash but with different size/price)."""
     return f"{p.get('transactionHash','')}|{p.get('asset','')}|{p.get('side','')}|{p.get('size','')}|{p.get('price','')}"
 
@@ -84,14 +84,14 @@ class Poller:
 
         self.seen = LRU.from_list(state.get("seen_tx_keys", []), config["dedup"]["seen_cap"])
 
-        # Watchdog state — updated on every WS event (any message type), so we
+        # Watchdog state - updated on every WS event (any message type), so we
         # detect zombie connections even when the target isn't trading.
         self.last_event_ms = int(time.time() * 1000)
         self.consecutive_reconnect_errors = 0
         self._state_dirty = False
 
         # Fills queued from WS receive loop, drained by consumer task.
-        # Bounded — overflow is logged and dropped.
+        # Bounded - overflow is logged and dropped.
         self._fill_queue: asyncio.Queue = asyncio.Queue(maxsize=FILL_QUEUE_MAX)
         self._dropped_fills = 0
 
@@ -146,7 +146,7 @@ class Poller:
                 if self.consecutive_reconnect_errors == max_errs:
                     log.error(
                         f"[WS] {self.consecutive_reconnect_errors} consecutive "
-                        f"failures (>= {max_errs}) — still retrying"
+                        f"failures (>= {max_errs}) - still retrying"
                     )
                 try:
                     await asyncio.wait_for(shutdown.wait(), timeout=backoff_s)
@@ -200,7 +200,7 @@ class Poller:
                     await ping_task
 
     async def _ping_loop(self, ws: aiohttp.ClientWebSocketResponse) -> None:
-        """App-level heartbeat — PM convention: send Text("PING") every 5s,
+        """App-level heartbeat - PM convention: send Text("PING") every 5s,
         server replies Text("PONG"). Loop exits when connection breaks."""
         while True:
             await asyncio.sleep(PING_INTERVAL_S)
@@ -215,7 +215,7 @@ class Poller:
         # Any TEXT message counts as alive for watchdog.
         self.last_event_ms = int(time.time() * 1000)
 
-        # PM may send bare PING / PONG / empty keepalive strings — ignore.
+        # PM may send bare PING / PONG / empty keepalive strings - ignore.
         stripped = raw.strip()
         if stripped in ("PING", "PONG", "ping", "pong", ""):
             return
@@ -253,7 +253,7 @@ class Poller:
             f"slug={fill.market_slug}"
         )
 
-        # Enqueue for the consumer task — never block the WS receive loop.
+        # Enqueue for the consumer task - never block the WS receive loop.
         try:
             self._fill_queue.put_nowait(fill)
         except asyncio.QueueFull:
@@ -264,7 +264,7 @@ class Poller:
             )
 
     async def _consumer_loop(self, shutdown: asyncio.Event) -> None:
-        """Drains the fill queue and calls on_fill — runs independently of
+        """Drains the fill queue and calls on_fill - runs independently of
         the WS receive loop so a slow POST /order doesn't block message read."""
         while not shutdown.is_set():
             try:
@@ -291,7 +291,7 @@ class Poller:
             ts_ms = int(envelope_ts_ms or 0)
         except (TypeError, ValueError):
             ts_ms = 0
-        if ts_ms < 10**11:    # envelope absent or in seconds — fall back to payload
+        if ts_ms < 10**11:    # envelope absent or in seconds - fall back to payload
             ts_raw = p.get("timestamp", 0) or 0
             try:
                 ts_num = float(ts_raw)
@@ -315,7 +315,7 @@ class Poller:
     async def silent_watchdog(self, shutdown: asyncio.Event) -> None:
         """
         If no WS event arrives in N seconds, abort the bot. PM activity is a
-        global firehose — events flow continuously regardless of target's trading.
+        global firehose - events flow continuously regardless of target's trading.
         Silence = zombie connection; raise to trigger graceful shutdown so a
         supervisor (systemd / operator) can restart with a fresh socket.
         """
@@ -330,7 +330,7 @@ class Poller:
             if silent_ms > timeout_ms:
                 msg = (
                     f"[WATCHDOG] No WS event in {silent_ms / 1000:.1f}s "
-                    f"(threshold {timeout_ms / 1000:.0f}s) — exiting for supervisor restart"
+                    f"(threshold {timeout_ms / 1000:.0f}s) - exiting for supervisor restart"
                 )
                 log.error(msg)
                 raise RuntimeError(msg)

@@ -1,1 +1,1 @@
-Polymarket copy trading bot (Python) — mirror top traders in real time. Support: t.me/dexoryn
+Polymarket copy trading bot (Python) - mirror top traders in real time. Support: t.me/dexoryn

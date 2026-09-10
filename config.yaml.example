@@ -1,4 +1,4 @@
-# app-tracecopy config — copy to config.yaml and fill in.
+# app-tracecopy config - copy to config.yaml and fill in.
 # config.yaml is gitignored.
 
 target_wallet: ""  # SET ME
@@ -13,12 +13,12 @@ sizing:
   # mode=fixed: literal USDC per copy (independent of target fill size)
   fixed_usd_per_fill: 10.0
 
-  # mode=percent_of_target: % of (chunk_shares * price) — chunk is the
+  # mode=percent_of_target: % of (chunk_shares * price) - chunk is the
   # accumulated buffer, not single fill (see batching below)
   percent_of_target: 0.05
 
   # Absolute cap on TOTAL outstanding (sum of open positions' cost basis).
-  # No per-position cap, no per-asset cap — just one global ceiling.
+  # No per-position cap, no per-asset cap - just one global ceiling.
   max_usd_total_in_positions: 100.0
 
   # Batching: bot accumulates target's BUY shares per asset until this many.
@@ -28,7 +28,7 @@ sizing:
 
 # Execution
 execution:
-  order_type: taker               # taker | maker — entry only (no exit logic)
+  order_type: taker               # taker | maker - entry only (no exit logic)
 
 maker_settings:                   # only used if order_type=maker
   rest_timeout_s: 30              # cancel unfilled GTC after this
@@ -52,7 +52,7 @@ watchdog:
   max_consecutive_errors: 5       # log ERROR + back off after N in a row
   silent_timeout_s: 30            # force HTTP session reset after N seconds of silence
 
-# Secrets — REQUIRED in real mode, OPTIONAL/empty in dry_run.
+# Secrets - REQUIRED in real mode, OPTIONAL/empty in dry_run.
 # Bot fail-fasts on missing field in real mode.
 #polymarket:
 #  private_key: "0x..."
