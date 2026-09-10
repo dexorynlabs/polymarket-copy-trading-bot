@@ -1,6 +1,6 @@
 # Polymarket Bot | Polymarket Trading Bot | Polymarket Copy Trading Bot  
 
-**Languages:** [English](README.md) · [中文](README.zh-CN.md) · [Русский](README.ru.md)
+**Languages:** [English](README.md) · [中文](public/README.zh-CN.md) · [Русский](public/README.ru.md)
 
 > **Automated Polymarket copy trading bot that mirrors active traders in real time**  
 > **Live tested • Real on-chain execution • Swap targets anytime**
@@ -83,7 +83,7 @@ What we saw:
 After switching targets, we copied [**securebet**](https://polymarket.com/@securebet) and captured this side-by-side:
 
 <p align="center">
-  <img src="Realtradehistory/securebet.jpg" alt="Copy trading PnL: bot wallet vs securebet target - matching chart shape" width="100%"/>
+  <img src="public/Realtradehistory/securebet.jpg" alt="Copy trading PnL: bot wallet vs securebet target - matching chart shape" width="100%"/>
 </p>
 
 **This is what ideal copy trading looks like.** Your bot wallet (left) and the target trader (right) show the **same PnL chart shape** for the day-the same flat period, dip, and recovery spike at the end. Dollar amounts differ because of your sizing settings and balance, but the **curve tracks the leader**, which means trades are being detected and mirrored in sync-not lagging behind or fighting the strategy.
@@ -240,9 +240,9 @@ Yes. A maintained premium build with extra support is also available via Telegra
 - **WeChat**: scan to add **DexorynWe**
 
 <p align="center">
-  <img src="dexoryn_tg.jpg" alt="Telegram QR code - @dexoryn" height="280"/>
+  <img src="public/dexoryn_tg.jpg" alt="Telegram QR code - @dexoryn" height="280"/>
   &nbsp;&nbsp;
-  <img src="dexoryn_wechat.png" alt="WeChat QR code - scan to add DexorynWe as a friend" height="280"/>
+  <img src="public/dexoryn_wechat.png" alt="WeChat QR code - scan to add DexorynWe as a friend" height="280"/>
 </p>
 
 ---
