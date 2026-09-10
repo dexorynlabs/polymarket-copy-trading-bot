@@ -21,6 +21,11 @@ out/
 # Environment variables
 .env
 
+# Runtime config with secrets (use config.yaml template from repo)
+config.yaml
+state.json
+state.json.tmp
+
 # Temporary files
 *.tmp
 *.temp

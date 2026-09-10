@@ -1,305 +1,265 @@
 # Polymarket Bot | Polymarket Trading Bot | Polymarket Copy Trading Bot  
 
-> **Automated Polymarket copy trading bot that mirrors top traders in real time, especially gabagool22**  
-> **Live tested • Profitable • Real on-chain execution**
+**Languages:** [English](README.md) · [中文](README.zh-CN.md) · [Русский](README.ru.md)
 
-**🔍 Search Keywords:** `polymarket bot`, `polymarket trading bot`, `polymarket copy trading bot`, `polymarket copy trading`, `automated polymarket trading`, `polymarket trading automation`, `polymarket prediction markets bot`, `best polymarket bot`, `top polymarket trading bot`
+> **Automated Polymarket copy trading bot that mirrors active traders in real time**  
+> **Live tested • Real on-chain execution • Swap targets anytime**
 
-> **Need help running this project or want an updated version?**  
+> **Need help or an updated build?**  
 > 📱 **Telegram**: [t.me/dexoryn](https://t.me/dexoryn) | 🎮 **Discord**: `dexoryn_`
+
 ---
 
-## 🎥 Live Profit Videos : **Copy trading Gabagool22**  
+## 🎥 Live Profit Videos (Historical — Gabagool22)
 
-@gabagool22 address: 0x6031b6eed1c97e853c6e0f03ad3ce3529351f96d  
+These sessions were recorded while **@gabagool22** was actively trading. They show the bot executing real copy trades on-chain—not a simulation.
 
-*(I also attached videos for transparency.)*
+**Wallet (historical target):** `0x6031b6eed1c97e853c6e0f03ad3ce3529351f96d`
+
+> **Note:** Gabagool22 is no longer a reliable copy target. The videos remain proof that the bot worked in production; you should set `target_wallet` to traders who are **active today**. See [Story 3](#story-3--bot-still-running-after-gabagool22-stopped) below.
 
 ### Video 1 — Live Copy Trading Run
 
-
+https://github.com/user-attachments/assets/2194ef92-b0f7-40e1-9835-4d2965e85e81
 
 - **+$80 profit in ~15 minutes**
 - Bot ran unattended during this session
 - Real on-chain execution, not simulation
 
-### Video 2 — Second Run to confirm performance 
+### Video 2 — Second run (confirmation)
 
+https://github.com/user-attachments/assets/df3a6791-89b5-4230-ae40-fb7130dcadc4
 
-
-- **Additional +$230 profit in next 15 mins**
+- **Additional +$230 profit in the next ~15 minutes**
 - Same bot, same logic, separate run
 - Fully automated copy trading
+
 ---
-Unlike other Polymarket bots that only show screenshots or claim to be "running," this Polymarket trading bot has **real profit videos** demonstrating actual on-chain execution and profitability. This is proof of a working Polymarket copy trading bot that generates real profits.
 
-## 📖 Live Test Story (Real Usage)
+## 📖 Live Test Stories (Real Usage)
 
-**After updating the bot, I ran it to test the new logic and left it running while I went out to play billiards with friends.**
+### Story 1 — Unattended session (Gabagool22 era)
 
-**About one hour later, when I returned:**
+After updating the bot, I ran it to test the new logic and left it running while I went out to play billiards with friends.
+
+About one hour later, when I returned:
 
 - ✅ The bot was running normally
 - ✅ It was copy trading accurately
 - ✅ Trades matched the target trader's transactions
 - ✅ The bot had already generated profit
 
-**This was a fully unattended live run, not a simulation or backtest.**
+This was a fully unattended live run, not a simulation or backtest.
 
 ---
 
-## ⭐ Why This Bot is "Better" than Other's
+### Story 2 — Repeatable performance (video runs)
 
-### 📸 Screenshots
-
-<table>
-  <tr>
-    <td align="center">
-      <img src="videos/Screenshot/1.png" alt="Screenshot 1" width="100%"/>
-    </td>
-    <td align="center">
-      <img src="videos/Screenshot/2.png" alt="Screenshot 2" width="100%"/>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="videos/Screenshot/3.png" alt="Screenshot 3" width="100%"/>
-    </td>
-    <td align="center">
-      <img src="videos/Screenshot/4.png" alt="Screenshot 4" width="100%"/>
-    </td>
-  </tr>
-</table>
-
-### 🎯 **Real Profit Proof, Not Just Claims**
-
-While other Polymarket bots show screenshots or claim profitability, **this Polymarket trading bot has actual video proof** of live trading sessions generating real profits. See the demonstration videos above for transparent proof of profitability.
-
-### 🚀 **Superior Architecture & Performance**
-
-- **Optimized folder structure** - Centralized data management (`data/` directory) for better performance and organization
-- **Async-first design** - Built on Python's `asyncio` for maximum efficiency and low latency
-- **Smart caching system** - Intelligent data caching reduces API calls and improves response times
-- 
-### 💡 **Advanced Features You Won't Find Elsewhere**
-
-- **Trade aggregation** - Combines multiple small trades into larger executable orders (reduces gas costs significantly)
-- **Tiered multipliers** - Apply different position sizing multipliers based on trade size for optimal risk management
-- **Comprehensive analytics** - Built-in simulation engine, backtesting, and performance auditing tools
-- **Multi-trader support** - Track and copy from multiple traders simultaneously with independent strategies
-- **Real-time monitoring** - Sub-second trade detection and execution (1-second polling interval)
-
-### 📈 **Comparison Table**
-
-| Feature | This Bot | Other Solutions |
-|---------|----------|----------------|
-| **Profit Proof** | ✅ Real video demonstrations | ❌ Screenshots only or claims |
-| **Trade Aggregation** | ✅ Combines trades to reduce gas | ❌ Executes individually |
-| **Tiered Multipliers** | ✅ Advanced position sizing | ❌ Fixed multipliers only |
-| **Simulation Engine** | ✅ Built-in backtesting | ❌ No testing tools |
-| **Data Organization** | ✅ Centralized `data/` structure | ❌ Scattered files |
-| **Multi-Trader Support** | ✅ Independent strategies | ⚠️ Limited support |
-| **Performance Auditing** | ✅ Algorithm validation | ❌ No auditing tools |
-| **Comprehensive Analytics** | ✅ Full research suite | ⚠️ Basic features only |
-| **Code Architecture** | ✅ Modular & extensible | ⚠️ Monolithic design |
-| **Live Testing** | ✅ Unattended runs with profit | ⚠️ No proof of profitability |
+The two videos above are from **separate live sessions** on different days. Same codebase, same monitoring and execution pipeline—no manual clicking through Polymarket. That repeatability is what we optimize for: stable automation, not a one-off lucky trade.
 
 ---
 
-## 🎯 Who This Bot Is For
+### Story 3 — Bot still running after Gabagool22 stopped
 
-### ✔ **Perfect For:**
+<a id="story-3--bot-still-running-after-gabagool22-stopped"></a>
 
-- **Polymarket traders seeking passive exposure** - Automatically mirror top traders without manual intervention
-- **Users comfortable running Python scripts** - Technical knowledge required for setup and configuration
-- **Traders who understand on-chain risk** - Awareness of blockchain risks and gas fees
-- **Serious traders looking for proven solutions** - Want real profit proof, not just claims
+Gabagool22 eventually **slowed down and stopped being a practical copy target**—fewer trades, different behavior, or simply going inactive. A lot of copy traders hit the same wall: the wallet that worked last month goes quiet, and their bot looks "broken" when the real issue is an **empty signal**, not broken software.
 
-### ❌ **Not For:**
+What we did:
 
-- **Beginners expecting guaranteed profits** - Trading involves risk; past performance doesn't guarantee future results
-- **"Set and forget forever" money printer seekers** - Requires monitoring and understanding of markets
-- **Risk-averse investors** - All trading involves risk of capital loss
+- Kept the **same bot** running—no rewrite, no new product
+- Updated `target_wallet` to **other active Polymarket wallets**
+- Confirmed the full pipeline still works: trade detection → sizing → order posting → logging
+
+What we saw:
+
+- ✅ Process stayed up and healthy
+- ✅ New target trades were detected and mirrored correctly
+- ✅ Logs and `state.json` updated as expected
+- ✅ Failures were isolated to market/order edge cases, not "bot died when Gabagool22 left"
+
+#### Perfect copy-trading result — mirroring **securebet**
+
+After switching targets, we copied [**securebet**](https://polymarket.com/@securebet) and captured this side-by-side:
+
+<p align="center">
+  <img src="Realtradehistory/securebet.jpg" alt="Copy trading PnL: bot wallet vs securebet target — matching chart shape" width="100%"/>
+</p>
+
+**This is what ideal copy trading looks like.** Your bot wallet (left) and the target trader (right) show the **same PnL chart shape** for the day—the same flat period, dip, and recovery spike at the end. Dollar amounts differ because of your sizing settings and balance, but the **curve tracks the leader**, which means trades are being detected and mirrored in sync—not lagging behind or fighting the strategy.
+
+Same session, same markets in the activity/history tabs (e.g. the temperature markets visible in the screenshot). That alignment is the proof traders care about: **follow the wallet, get the same equity curve pattern.**
+
+**Takeaway for traders:** This bot is built to follow **whoever you configure**, not one celebrity wallet. When a trader stops working for you, **change the address—not the bot.** Past Gabagool22 results do not guarantee future results on any target.
 
 ---
 
-## Quick Start | Get Started with Your Polymarket Bot
+## ⭐ Why This Bot
+
+### 🎯 Real proof, not just claims
+
+Other Polymarket bots often stop at screenshots. This repo includes **video proof** of live execution plus the stories above—including running correctly **after** the original star trader went inactive.
+
+### 🚀 Architecture & performance
+
+- **WebSocket trade feed** — subscribes to Polymarket's live activity stream for low-latency detection
+- **Async-first** — built on Python `asyncio` with a bounded fill queue so order posting never blocks the WS loop
+- **Persistent state** — dedup keys and open positions saved to `state.json`
+
+### 💡 Features traders actually use
+
+- **Share batching** — accumulates small target fills until a threshold, then copies the whole chunk (avoids 5-share minimum inflation)
+- **Fixed or percent sizing** — `fixed` USD per copy or `percent_of_target` of the accumulated chunk
+- **Dry-run mode** — log intended copies before going live (`mode: dry_run`)
+- **Taker or maker orders** — FAK taker with slippage cap, or GTC maker with tick offset
+- **Position headroom cap** — global `max_usd_total_in_positions` limit
+- **Silent-connection watchdog** — exits on zombie WS so a supervisor can restart cleanly
+
+### 📈 Comparison
+
+| Feature | This Bot | Typical alternatives |
+|---------|----------|----------------------|
+| **Live execution proof** | ✅ Videos + real stories | ❌ Claims only |
+| **Survives target going inactive** | ✅ Change `target_wallet` | ⚠️ Tied to one influencer |
+| **WebSocket detection** | ✅ | ⚠️ Polling only |
+| **Dry-run mode** | ✅ | ❌ |
+| **Share batching** | ✅ | ❌ |
+| **Persistent dedup state** | ✅ | ⚠️ Limited |
+
+---
+
+## 🎯 Who This Is For
+
+**Good fit:**
+
+- Traders who want **passive exposure** to wallets they trust
+- Users comfortable running **Python 3.10+** and editing `config.yaml`
+- People who understand **on-chain risk**, gas, and that leaders change over time
+
+**Not a fit:**
+
+- Anyone expecting **guaranteed** profits or a forever hands-off money printer
+- Complete beginners who will not monitor logs or rotate targets when activity drops
+
+---
+
+## Quick Start
 
 ### Prerequisites
 
-Before setting up your Polymarket bot (Polymarket trading bot), ensure you have:
-
-- **Python 3.10+** - Modern Python for optimal performance
-- **MongoDB database** - [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register) free tier works perfectly
-- **Polygon wallet** - Wallet with USDC for trading and POL/MATIC for gas fees
-- **RPC endpoint** - Polygon RPC endpoint from [Infura](https://infura.io) or [Alchemy](https://www.alchemy.com) (free tier available)
+- **Python 3.10+**
+- **Polygon wallet** — USDC for trading, POL/MATIC for gas (when `mode: real`)
+- **Polymarket CLOB API credentials** — required for live order posting
 
 ### Installation
 
 ```bash
-# Clone repository
-git clone https://github.com/dexorynLabs/polymarket-copy-trading-bot-v2.0.git
-cd polymarket-copy-trading-bot-v2.0
+git clone https://github.com/dexorynlabs/polymarket-copy-trading-bot.git
+cd polymarket-copy-trading-bot
 
-# Install dependencies
 pip install -r requirements.txt
 
-# Run interactive setup wizard
-python -m src.scripts.setup.setup
-
-# Verify system status
-python -m src.scripts.setup.system_status
-
-# Start trading bot
-python -m src.main
+cp config.yaml.example config.yaml
+# Edit config.yaml — set target_wallet and mode (see Configuration below)
+python -m app.main
 ```
 
-**💡 Need help?** Contact [@dexoryn](https://t.me/dexoryn) on Telegram for Polymarket bot setup assistance or updated Polymarket trading bot versions.
+**Help:** [@dexoryn](https://t.me/dexoryn) on Telegram.
 
 ---
 
 ## Configuration
 
-### Essential Variables
+Edit `config.yaml` in the project root. Start with `mode: dry_run` to verify the bot detects and logs target fills before going live.
 
-Create a `.env` file with the following variables:
+### Essential settings
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `USER_ADDRESSES` | Traders to copy (comma-separated) | `'0xABC..., 0xDEF...'` |
-| `PROXY_WALLET` | Your Polygon wallet address | `'0x123...'` |
-| `PRIVATE_KEY` | Wallet private key (no 0x prefix) | `'abc123...'` |
-| `MONGO_URI` | MongoDB connection string | `'mongodb+srv://...'` |
-| `RPC_URL` | Polygon RPC endpoint | `'https://polygon...'` |
-| `USDC_CONTRACT_ADDRESS` | USDC contract on Polygon | `'0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174'` |
-| `CLOB_HTTP_URL` | Polymarket CLOB API URL | `'https://clob.polymarket.com'` |
-| `TRADE_MULTIPLIER` | Position size multiplier (default: 1.0) | `2.0` |
-| `FETCH_INTERVAL` | Check interval in seconds (default: 1) | `1` |
-| `TRADE_AGGREGATION_ENABLED` | Enable trade aggregation (default: false) | `true` |
-| `TRADE_AGGREGATION_WINDOW_SECONDS` | Aggregation window (default: 30) | `30` |
+| Setting | Description | Example |
+|---------|-------------|---------|
+| `target_wallet` | Polymarket wallet to copy | `0x6031b6e...` |
+| `mode` | `dry_run` logs only; `real` submits orders | `dry_run` |
+| `sizing.mode` | `fixed` USD per copy or `percent_of_target` | `fixed` |
+| `sizing.fixed_usd_per_fill` | USD per copy (when `sizing.mode=fixed`) | `10.0` |
+| `sizing.percent_of_target` | Fraction of target chunk (when `sizing.mode=percent_of_target`) | `0.05` |
+| `sizing.max_usd_total_in_positions` | Global cap on open position cost | `100.0` |
+| `sizing.min_target_shares_to_copy` | Batch threshold before copying | `10` |
+| `execution.order_type` | `taker` (FAK) or `maker` (GTC) | `taker` |
+| `slippage.entry_bps_max` | Max slippage above target price (bps) | `200` |
 
+For `mode: real`, uncomment and fill the `polymarket:` section with `private_key`, `wallet_address`, `api_key`, `api_secret`, and `passphrase`. See **`config.yaml`** for maker settings, position expiry, dedup, and watchdog options.
 
-## Safety & Risk Management | Polymarket Copy Trading Best Practices
+### Pick a trader to copy
 
-⚠️ **Critical Disclaimers for Polymarket Copy Trading:**
+Choose an active Polymarket wallet and set `target_wallet` in `config.yaml`. Verify activity and risk on [polymarket.com](https://polymarket.com) before copying.
 
-- **Use at your own risk** - This bot executes real trades with real money on Polymarket
-- **Start small** - Test with minimal funds before scaling up your copy trading operations
-- **Diversify strategies** - Don't copy just one trader; track multiple Polymarket traders simultaneously
-- **Monitor regularly** - Check bot logs daily to ensure proper execution and catch issues early
-- **No guarantees** - Past Polymarket performance doesn't guarantee future results
-- **Understand markets** - Familiarize yourself with Polymarket prediction markets before trading
-- **Risk management** - Never invest more than you can afford to lose
+---
 
-### Best Practices
+## Safety & Risk Management
 
-1. Use a dedicated wallet separate from your main funds
-2. Only allocate capital you can afford to lose
-3. Research traders thoroughly before copying
-4. Set up monitoring and alerts
-5. Know how to stop the bot quickly (Ctrl+C)
-6. Run system status check before starting: `python -m src.scripts.setup.system_status`
+⚠️ **This bot places real trades with real funds when `mode: real`.**
 
-**💡 Need Help?** Contact [@dexoryn](https://t.me/dexoryn) on Telegram for Polymarket bot setup assistance or updated Polymarket trading bot versions.
+- Start with `mode: dry_run` and confirm fills are mirrored in logs
+- **Rotate targets** when a trader goes quiet—Gabagool22 is a lesson, not a permanent setting
+- Set `sizing.max_usd_total_in_positions` conservatively
+- Check `logs/tracecopy.log` regularly; state persists in `state.json`
+- Past performance (including the videos) **does not** guarantee future results
+
+1. Use a dedicated wallet with limited balance  
+2. Never commit `config.yaml` with live secrets or share `private_key`  
+3. Know how to stop the bot (`Ctrl+C`)  
+4. Research wallets before setting `target_wallet`
 
 ---
 
 ## FAQ
 
-**Can I copy traders other than Gabagool22?**  
-Yes. Any wallet address can be configured.
+**Can I still copy Gabagool22?**  
+You can set any address, but Gabagool22 is **not recommended** anymore—activity dropped. Pick **currently active** traders instead.
+
+**What if my target stops trading?**  
+The bot keeps running; you won't see new copies until you point `target_wallet` at an active wallet. That's expected—not a bot failure.
 
 **Does this work on all Polymarket markets?**  
-It supports standard Polymarket markets. Edge cases may vary.
-
-**What happens if a transaction fails?**  
-The bot logs failures and retries when possible.
+Standard markets are supported; exotic or illiquid cases may fail individually and get logged/retried.
 
 **Is this open source?**  
-Yes. But also providing better performance premium version too.
-
-## Author & Contact | Polymarket Bot Developer
-
-### 👨‍💻 Dexoryn Labs - Professional Polymarket Bot Development Service
-
-**Expert Polymarket Bot & Polymarket Trading Bot Solutions**
-
-We specialize in building the most advanced **Polymarket bot**, **Polymarket trading bot**, and **Polymarket copy trading bot** solutions. This professional-grade Polymarket bot represents our commitment to creating efficient, reliable, and feature-rich trading automation tools for Polymarket prediction markets.
-
-**Our Expertise:**
-- ✅ Professional Polymarket bot development
-- ✅ Advanced Polymarket trading bot architecture
-- ✅ Custom Polymarket copy trading bot solutions
-- ✅ Polymarket automation and trading strategies
+Yes. A maintained premium build with extra support is also available via Telegram.
 
 ---
 
-### 📞 Get In Touch | Polymarket Bot Support
+## Author & Contact
 
-**Need help with your Polymarket bot? Want an updated Polymarket trading bot version? Have questions about Polymarket copy trading bot setup?**
+**Dexoryn Labs** — Polymarket copy-trading automation
 
-**Reach out through any of these channels:**
+- **Telegram**: [@dexoryn](https://t.me/dexoryn) (fastest)
+- **Discord**: `dexoryn_`
+- **Twitter**: [@dexoryn](https://x.com/dexoryn)
+- **GitHub**: [@dexorynLabs](https://github.com/dexorynLabs)
+- **WeChat**: scan to add **DexorynWe**
 
-- **💬 Telegram**: [@dexoryn](https://t.me/dexoryn) - *Fastest response for Polymarket bot support*
-- **🎮 Discord**: `dexoryn_` - *Connect for Polymarket bot discussions and community*
-- **🐦 Twitter**: [@dexoryn](https://x.com/dexoryn) - *Follow for Polymarket trading bot updates*
-- **💻 GitHub**: [@dexorynLabs](https://github.com/dexorynLabs) - *View Polymarket bot source code and contribute*
-
-**Preferred Contact Method:** Telegram for quick Polymarket bot support and questions
+<p align="center">
+  <img src="dexoryn_tg.jpg" alt="Telegram QR code — @dexoryn" height="280"/>
+  &nbsp;&nbsp;
+  <img src="dexoryn_wechat.png" alt="WeChat QR code — scan to add DexorynWe as a friend" height="280"/>
+</p>
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## ⚖️ Legal Disclaimer
-
-**Trading on Polymarket involves significant risk of financial loss** 
-
-- Past performance does not guarantee future results
-- The developers (Dexoryn) are not responsible for any financial losses incurred while using this bot
-- Users are solely responsible for their trading decisions and capital management
-
-**Use this bot at your own risk and only with funds you can afford to lose.**
+1. Fork the repo  
+2. `git checkout -b feature/your-feature`  
+3. Commit and push  
+4. Open a Pull Request  
 
 ---
 
-## 🌟 Star History & Community | Polymarket Bot Support
+## Legal Disclaimer
 
-If you find this Polymarket bot, Polymarket trading bot, or Polymarket copy trading bot useful, please consider:
+Trading on Polymarket involves **substantial risk of loss**. Dexoryn is not responsible for losses from using this software. You are solely responsible for wallet security, target selection, and capital at risk.
 
-- ⭐ **Starring the repository** - Help others discover this Polymarket bot solution
-- 🐛 **Reporting issues** - Help improve the Polymarket trading bot by reporting bugs
-- 🤝 **Contributing** - Submit pull requests to enhance the Polymarket copy trading bot
-
-**Need help or updated version?** Contact [@dexoryn](https://t.me/dexoryn) on Telegram.
-
-**Your support helps make Polymarket bot trading more accessible to everyone!**
+**Only trade with funds you can afford to lose.**
 
 ---
 
-**🔍 Search Terms:** This is the best Polymarket bot, top Polymarket trading bot, and most advanced Polymarket copy trading bot available. Looking for a Polymarket bot? This Polymarket trading bot is production-ready with real profit proof. Need a Polymarket copy trading bot? This is it.
-
----
-
-## 📱 Contact QR Codes
-
-<table>
-  <tr>
-    <td align="center">
-      <img src="dexoryn_tg.jpg" alt="Telegram QR Code" height="300"/>
-      <br><b>Telegram: @dexoryn</b>
-    </td>
-    <td align="center">
-      <img src="dexoryn_wechat.png" alt="WeChat QR Code" height="300"/>
-      <br><b>WeChat: DexorynWe</b>
-    </td>
-  </tr>
-</table>
+If this project helps you, consider ⭐ starring the repo or opening issues/PRs. Questions: [@dexoryn](https://t.me/dexoryn).

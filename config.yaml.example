@@ -1,0 +1,62 @@
+# app-tracecopy config — copy to config.yaml and fill in.
+# config.yaml is gitignored.
+
+target_wallet: ""  # SET ME
+
+# Mode: dry_run logs intent only, real signs & POSTs to CLOB
+mode: dry_run                     # dry_run | real
+
+# Sizing
+sizing:
+  mode: fixed                     # fixed | percent_of_target
+
+  # mode=fixed: literal USDC per copy (independent of target fill size)
+  fixed_usd_per_fill: 10.0
+
+  # mode=percent_of_target: % of (chunk_shares * price) — chunk is the
+  # accumulated buffer, not single fill (see batching below)
+  percent_of_target: 0.05
+
+  # Absolute cap on TOTAL outstanding (sum of open positions' cost basis).
+  # No per-position cap, no per-asset cap — just one global ceiling.
+  max_usd_total_in_positions: 100.0
+
+  # Batching: bot accumulates target's BUY shares per asset until this many.
+  # When buffer >= threshold, copy proportional to the WHOLE buffer, then
+  # reset. Prevents bump-to-5-shares inflation on tiny target fills.
+  min_target_shares_to_copy: 10
+
+# Execution
+execution:
+  order_type: taker               # taker | maker — entry only (no exit logic)
+
+maker_settings:                   # only used if order_type=maker
+  rest_timeout_s: 30              # cancel unfilled GTC after this
+  price_offset_ticks: 0           # 0 = target_price; -1 = one tick below best_ask
+
+# Position expiry (drops from headroom tracker)
+position_expiry:
+  buffer_s: 60                    # drop position from tracker at endDate + buffer
+  fallback_ttl_min: 1440          # if Gamma never returned endDate, drop after 24h
+
+# Slippage cap for taker FAK orders (limit price = target.price * (1 + bps/10000))
+slippage:
+  entry_bps_max: 200              # accept up to +2% above target's fill price
+
+# Dedup state (5-layer protection, see PLAN §5.1)
+dedup:
+  seen_cap: 50000                 # LRU size for seen_tx_keys
+
+# Watchdog
+watchdog:
+  max_consecutive_errors: 5       # log ERROR + back off after N in a row
+  silent_timeout_s: 30            # force HTTP session reset after N seconds of silence
+
+# Secrets — REQUIRED in real mode, OPTIONAL/empty in dry_run.
+# Bot fail-fasts on missing field in real mode.
+#polymarket:
+#  private_key: "0x..."
+#  wallet_address: "0x..."
+#  api_key: "..."
+#  api_secret: "..."
+#  passphrase: "..."
