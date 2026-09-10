@@ -8,6 +8,13 @@
 > **需要帮助或更新版本？**  
 > 📱 **Telegram**：[t.me/dexoryn](https://t.me/dexoryn) | 🎮 **Discord**：`dexoryn_`
 
+## 目录
+
+- [快速开始](#快速开始)
+- [安装](#安装)
+- [配置](#配置)
+- [贡献](#贡献)
+
 ---
 
 ## 🎥 实盘盈利视频（历史记录 — Gabagool22）
@@ -16,7 +23,7 @@
 
 **钱包（历史跟单目标）：** `0x6031b6eed1c97e853c6e0f03ad3ce3529351f96d`
 
-> **说明：** Gabagool22 已不再是可靠的跟单对象。视频仍可证明机器人曾在生产环境正常运行；请将 `USER_ADDRESSES` 指向**当前仍活跃**的交易者。见下方 [故事 3](#story-3--bot-still-running-after-gabagool22-stopped)。
+> **说明：** Gabagool22 已不再是可靠的跟单对象。视频仍可证明机器人曾在生产环境正常运行；请在 `config.yaml` 中将 `target_wallet` 指向**当前仍活跃**的交易者。见下方 [故事 3](#story-3--bot-still-running-after-gabagool22-stopped)。
 
 ### 视频 1 — 实盘跟单运行
 
@@ -68,14 +75,14 @@ Gabagool22 最终**交易减少，不再适合作为跟单目标**——成交�
 我们做了什么：
 
 - **同一套机器人**继续运行——无需重写或换产品
-- 将 `USER_ADDRESSES` 更新为**其他活跃的 Polymarket 钱包**（可使用 `src/scripts/research/` 下的研究脚本，或自行尽调）
+- 在 `config.yaml` 中将 `target_wallet` 更新为**其他活跃的 Polymarket 钱包**
 - 确认完整流程仍正常：检测交易 → 计算仓位 → 下单 → 日志记录
 
 我们观察到：
 
 - ✅ 进程稳定健康
 - ✅ 新目标的交易被正确检测并镜像
-- ✅ 日志与 MongoDB 历史按预期更新
+- ✅ 日志与 `state.json` 按预期更新
 - ✅ 失败仅出现在个别市场/订单边界情况，而非「Gabagool22 一走机器人就挂了」
 
 #### 完美跟单结果 — 镜像 **securebet**
@@ -86,9 +93,7 @@ Gabagool22 最终**交易减少，不再适合作为跟单目标**——成交�
   <img src="Realtradehistory/securebet.jpg" alt="跟单盈亏：机器人钱包 vs securebet 目标 — 曲线形状一致" width="100%"/>
 </p>
 
-**这就是理想跟单应有的样子。** 左侧为你的机器人钱包，右侧为目标交易者，当日 **盈亏曲线形状一致**——相同的横盘、回撤与末尾反弹。美元金额因你的仓位设置（`COPY_SIZE`、倍数与余额）而不同，但**曲线跟随领头钱包**，说明交易被及时检测并同步镜像，而非滞后或偏离策略。
-
-同一会话中，活动/历史标签页出现相同市场（如截图中的气温类市场）。交易者最在意的证明是：**跟对钱包，就能得到相同的资金曲线形态。**
+**这就是理想跟单应有的样子。** 左侧为你的机器人钱包，右侧为目标交易者，当日 **盈亏曲线形状一致**——相同的横盘、回撤与末尾反弹。美元金额因你的仓位设置与余额而不同，但**曲线跟随领头钱包**，说明交易被及时检测并同步镜像，而非滞后或偏离策略。
 
 **给交易者的结论：** 本机器人跟单**你配置的任何地址**，而非绑定某个「明星钱包」。当某位交易者不再适合你时，**换地址，不要换机器人。** Gabagool22 的过往表现不保证任何目标未来的结果。
 
@@ -102,29 +107,18 @@ Gabagool22 最终**交易减少，不再适合作为跟单目标**——成交�
 
 ### 🚀 架构与性能
 
-- **集中式 `data/` 目录** — 日志、缓存与模拟结果统一管理
-- **异步优先** — 基于 Python `asyncio`，低延迟监控
-- **智能缓存** — 减少重复 API 调用
+- **WebSocket 成交流** — 订阅 Polymarket 实时 activity 流，低延迟检测
+- **异步优先** — 基于 Python `asyncio`，有界队列避免下单阻塞 WS 循环
+- **持久化状态** — 去重键与持仓写入 `state.json`
 
 ### 💡 交易者真正会用到的功能
 
-- **交易聚合** — 将多笔小单合并为可执行规模（节省 gas，满足 Polymarket 最低额）
-- **分层倍数** — 按领头者单笔规模调整仓位（见 `.env.example` 中的 `TIERED_MULTIPLIERS`）
-- **跟单策略** — `PERCENTAGE`、`FIXED` 或 `ADAPTIVE` 仓位计算
-- **模拟与审计工具** — 实盘前回测与验证
-- **多交易者支持** — 同时跟单多个钱包
-- **1 秒轮询** — 通过 `FETCH_INTERVAL` 可配置
-
-### 📈 对比
-
-| 功能 | 本机器人 | 常见替代方案 |
-|------|----------|----------------|
-| **实盘执行证明** | ✅ 视频 + 真实故事 | ❌ 仅宣传 |
-| **目标停更后仍可用** | ✅ 更换 `USER_ADDRESSES` | ⚠️ 绑定单一网红钱包 |
-| **交易聚合** | ✅ | ❌ |
-| **分层倍数** | ✅ | ❌ 仅固定倍数 |
-| **模拟 / 审计** | ✅ | ❌ |
-| **多交易者** | ✅ | ⚠️ 有限 |
+- **份额批处理** — 累积目标小单至阈值后一次性跟单
+- **固定或比例仓位** — `fixed` 固定 USD 或 `percent_of_target` 按比例
+- **模拟模式** — `mode: dry_run` 仅记录意图，不下单
+- **Taker / Maker** — FAK 吃单（含滑点上限）或 GTC 挂单
+- **总仓位上限** — `max_usd_total_in_positions` 全局限制
+- **连接看门狗** — WS 静默超时自动退出，便于进程管理器重启
 
 ---
 
@@ -133,7 +127,7 @@ Gabagool22 最终**交易减少，不再适合作为跟单目标**——成交�
 **适合：**
 
 - 希望**被动跟随**信任钱包的交易者
-- 能运行 **Python 3.10+** 并配置 `.env` 的用户
+- 能运行 **Python 3.10+** 并编辑 `config.yaml` 的用户
 - 理解**链上风险**、gas，以及领头者会随时间变化的人
 
 **不适合：**
@@ -143,29 +137,26 @@ Gabagool22 最终**交易减少，不再适合作为跟单目标**——成交�
 
 ---
 
-## 快速开始
+## 🚀 快速开始
 
 ### 环境要求
 
 - **Python 3.10+**
-- **MongoDB** — [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register) 免费套餐即可
-- **Polygon 钱包** — 交易用 USDC，gas 用 POL/MATIC
-- **RPC URL** — [Infura](https://infura.io) 或 [Alchemy](https://www.alchemy.com)
+- **Polygon 钱包** — 交易用 USDC，gas 用 POL/MATIC（`mode: real` 时）
+- **Polymarket CLOB API 凭证** — 实盘下单所需
 
-### 安装
+## 安装
 
 ```bash
-git clone https://github.com/dexorynLabs/polymarket-copy-trading-bot-v2.0.git
-cd polymarket-copy-trading-bot-v2.0
+git clone https://github.com/dexorynlabs/polymarket-trading-bot-python.git
+cd polymarket-trading-bot-python
 
 pip install -r requirements.txt
 
-python -m src.scripts.setup.setup
-python -m src.scripts.setup.system_status
-python -m src.main
+cp config.yaml.example config.yaml
+# 编辑 config.yaml — 设置 target_wallet 和 mode（见下方配置说明）
+python -m app.main
 ```
-
-可选：`pip install -e .` 后运行 `polymarket-bot`（见 `pyproject.toml`）。
 
 **帮助：** Telegram [@dexoryn](https://t.me/dexoryn)
 
@@ -173,66 +164,57 @@ python -m src.main
 
 ## 配置
 
-将 `.env.example` 复制为 `.env` 并填写密钥。安装向导会写入大部分字段。
+编辑项目根目录的 `config.yaml`。先用 `mode: dry_run` 确认机器人能检测并记录目标成交，再切换实盘。
 
-### 核心变量
+### 核心设置
 
-| 变量 | 说明 | 示例 |
+| 设置 | 说明 | 示例 |
 |------|------|------|
-| `USER_ADDRESSES` | 要跟单的钱包（逗号分隔或 JSON 数组） | `'0xABC..., 0xDEF...'` |
-| `PROXY_WALLET` | 你的 Polygon 交易钱包 | `'0x123...'` |
-| `PRIVATE_KEY` | 私钥（**不要**加 `0x` 前缀） | `'abc...'` |
-| `MONGO_URI` | MongoDB 连接字符串 | `'mongodb+srv://...'` |
-| `RPC_URL` | Polygon RPC | `'https://polygon-mainnet...'` |
-| `USDC_CONTRACT_ADDRESS` | Polygon 上 USDC（示例中为默认值） | `'0x2791...'` |
-| `CLOB_HTTP_URL` | Polymarket CLOB API | `'https://clob.polymarket.com'` |
-| `COPY_STRATEGY` | `PERCENTAGE`、`FIXED` 或 `ADAPTIVE` | `PERCENTAGE` |
-| `COPY_SIZE` | 依策略为 % 或 USD | `10.0` |
-| `FETCH_INTERVAL` | 轮询间隔（秒），默认 `1` | `1` |
-| `PREVIEW_MODE` | `true` = 仅监控不下单 | `false` |
-| `TRADE_AGGREGATION_ENABLED` | 合并小单（默认 `false`） | `true` |
-| `TRADE_AGGREGATION_WINDOW_SECONDS` | 合并等待时间（默认 `300`） | `300` |
+| `target_wallet` | 要跟单的 Polymarket 钱包 | `0x6031b6e...` |
+| `mode` | `dry_run` 仅记录；`real` 提交订单 | `dry_run` |
+| `sizing.mode` | `fixed` 固定 USD 或 `percent_of_target` 按比例 | `fixed` |
+| `sizing.fixed_usd_per_fill` | 每次跟单 USD（`sizing.mode=fixed` 时） | `10.0` |
+| `sizing.percent_of_target` | 目标 chunk 比例（`percent_of_target` 时） | `0.05` |
+| `sizing.max_usd_total_in_positions` | 持仓成本全局上限 | `100.0` |
+| `sizing.min_target_shares_to_copy` | 批处理阈值（份额） | `10` |
+| `execution.order_type` | `taker`（FAK）或 `maker`（GTC） | `taker` |
+| `slippage.entry_bps_max` | 相对目标价最大滑点（bps） | `200` |
 
-`TIERED_MULTIPLIERS`、安全上限及旧版 `TRADE_MULTIPLIER` 见 **`.env.example`**。
+`mode: real` 时，取消注释并填写 `polymarket:` 下的 `private_key`、`wallet_address`、`api_key`、`api_secret`、`passphrase`。Maker 设置、持仓过期、去重与看门狗见 **`config.yaml`**。
 
-### 寻找活跃交易者
+### 选择跟单目标
 
-```bash
-python -m src.scripts.research.find_best_traders
-python -m src.scripts.research.scan_best_traders
-```
-
-跟单前务必自行核实钱包活跃度与风险。
+在 [polymarket.com](https://polymarket.com) 核实活跃度与风险后，将活跃钱包地址写入 `target_wallet`。
 
 ---
 
 ## 安全与风险管理
 
-⚠️ **本机器人使用真实资金进行真实交易。**
+⚠️ **`mode: real` 时本机器人使用真实资金进行真实交易。**
 
-- 从小资金开始；先用 `PREVIEW_MODE=true`
-- 交易者不活跃时**更换目标**——Gabagool22 是教训，不是永久配置
-- 尽可能**跟单多个钱包**，勿依赖单一地址
-- 每日查看日志；实盘前运行 `python -m src.scripts.setup.system_status`
+- 先用 `mode: dry_run` 确认日志中的跟单意图
+- 交易者不活跃时**更换 `target_wallet`**
+- 保守设置 `sizing.max_usd_total_in_positions`
+- 定期查看 `logs/tracecopy.log`；状态保存在 `state.json`
 - 过往表现（含视频）**不保证**未来结果
 
 1. 使用余额有限的专用钱包  
-2. 切勿提交 `.env` 或泄露 `PRIVATE_KEY`  
+2. 切勿提交含密钥的 `config.yaml` 或泄露 `private_key`  
 3. 知道如何停止机器人（`Ctrl+C`）  
-4. 将钱包加入 `USER_ADDRESSES` 前做好研究  
+4. 设置 `target_wallet` 前做好研究  
 
 ---
 
 ## 常见问题
 
 **还能跟单 Gabagool22 吗？**  
-可以设置任意地址，但 Gabagool22 **已不再推荐**——活跃度下降。请用研究脚本或自建**当前活跃**交易者列表。
+可以设置任意地址，但 Gabagool22 **已不再推荐**——活跃度下降。请选择**当前活跃**的交易者。
 
 **如果目标停止交易怎么办？**  
-机器人会继续运行；在将 `USER_ADDRESSES` 指向活跃钱包前不会有新跟单。这是正常现象，不是机器人故障。
+机器人会继续运行；将 `target_wallet` 指向活跃钱包前不会有新跟单。这是正常现象，不是机器人故障。
 
 **支持所有 Polymarket 市场吗？**  
-支持标准市场；冷门或流动性差的情况可能单笔失败并记录/重试。
+支持标准市场；冷门或流动性差的情况可能单笔失败并记录。
 
 **是否开源？**  
 是。另有维护中的高级版本，可通过 Telegram 获取额外支持。
