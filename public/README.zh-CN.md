@@ -1,6 +1,6 @@
 # Polymarket 机器人 | Polymarket 交易机器人 | Polymarket 跟单机器人
 
-**语言：** [English](README.md) · [中文](README.zh-CN.md) · [Русский](README.ru.md)
+**语言：** [English](../README.md) · [中文](README.zh-CN.md) · [Русский](README.ru.md)
 
 > **实时镜像活跃交易者的 Polymarket 自动跟单机器人**  
 > **实盘验证 • 真实链上执行 • 随时更换跟单目标**
