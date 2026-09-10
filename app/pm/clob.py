@@ -1,4 +1,4 @@
-"""CLOB v2 client — EIP-712 signing, L2 HMAC auth, REST endpoints.
+"""CLOB v2 client - EIP-712 signing, L2 HMAC auth, REST endpoints.
 
 In dry_run mode, place_order() short-circuits and logs [DRY-RUN] WOULD-PLACE
 without signing or POSTing.
@@ -45,7 +45,7 @@ log = logging.getLogger("clob")
 class OrderSpec:
     """Sized, priced order ready for CLOB submission."""
     asset_id: str            # token_id (numeric string)
-    side: str                # "BUY" only — bot doesn't sell
+    side: str                # "BUY" only - bot doesn't sell
     size: float              # shares (float, will be floored to 2 dec)
     price: float             # limit price (rounded to tick already)
     order_type: str          # "FAK" (taker) or "GTC" (maker)
@@ -55,7 +55,7 @@ class OrderSpec:
 
 @dataclass
 class OrderResult:
-    """Result of place_order — fields available in dry_run + real."""
+    """Result of place_order - fields available in dry_run + real."""
     success: bool
     order_id: Optional[str] = None
     status: Optional[str] = None          # "matched", "live", "unmatched", "delayed"
@@ -245,7 +245,7 @@ def l2_headers(
     path: str,
     body: str,
 ) -> dict:
-    """L2 auth — HMAC-SHA256 of (ts + METHOD + path + body) with decoded secret."""
+    """L2 auth - HMAC-SHA256 of (ts + METHOD + path + body) with decoded secret."""
     ts = str(int(time.time()))
     msg = f"{ts}{method.upper()}{path}{body}".encode()
     secret_bytes = _decode_secret(api_secret)
@@ -283,7 +283,7 @@ class ClobClient:
             self.api_key = None
             self.api_secret = None
             self.passphrase = None
-            log.info("ClobClient init: DRY-RUN — no signing")
+            log.info("ClobClient init: DRY-RUN - no signing")
             return
 
         if not secrets:
@@ -295,10 +295,10 @@ class ClobClient:
         self.passphrase = secrets["passphrase"]
         # Verify key parses (use same normalization as sign_order)
         Account.from_key("0x" + self.private_key.lower().removeprefix("0x"))
-        log.info(f"ClobClient init: REAL — funder={self.funder[:10]}…")
+        log.info(f"ClobClient init: REAL - funder={self.funder[:10]}…")
 
     async def place_order(self, spec: OrderSpec) -> OrderResult:
-        # NOTE: success path is intentionally silent — trader.py emits a single
+        # NOTE: success path is intentionally silent - trader.py emits a single
         # consolidated [COPY] line that combines order spec + latencies.
         # We log only on failure ([REJECT] / [ERROR]).
         if self.dry_run:

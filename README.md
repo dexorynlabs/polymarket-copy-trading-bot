@@ -10,15 +10,15 @@
 
 ---
 
-## 🎥 Live Profit Videos (Historical — Gabagool22)
+## 🎥 Live Profit Videos (Historical - Gabagool22)
 
-These sessions were recorded while **@gabagool22** was actively trading. They show the bot executing real copy trades on-chain—not a simulation.
+These sessions were recorded while **@gabagool22** was actively trading. They show the bot executing real copy trades on-chain-not a simulation.
 
 **Wallet (historical target):** `0x6031b6eed1c97e853c6e0f03ad3ce3529351f96d`
 
 > **Note:** Gabagool22 is no longer a reliable copy target. The videos remain proof that the bot worked in production; you should set `target_wallet` to traders who are **active today**. See [Story 3](#story-3--bot-still-running-after-gabagool22-stopped) below.
 
-### Video 1 — Live Copy Trading Run
+### Video 1 - Live Copy Trading Run
 
 https://github.com/user-attachments/assets/2194ef92-b0f7-40e1-9835-4d2965e85e81
 
@@ -26,7 +26,7 @@ https://github.com/user-attachments/assets/2194ef92-b0f7-40e1-9835-4d2965e85e81
 - Bot ran unattended during this session
 - Real on-chain execution, not simulation
 
-### Video 2 — Second run (confirmation)
+### Video 2 - Second run (confirmation)
 
 https://github.com/user-attachments/assets/df3a6791-89b5-4230-ae40-fb7130dcadc4
 
@@ -38,7 +38,7 @@ https://github.com/user-attachments/assets/df3a6791-89b5-4230-ae40-fb7130dcadc4
 
 ## 📖 Live Test Stories (Real Usage)
 
-### Story 1 — Unattended session (Gabagool22 era)
+### Story 1 - Unattended session (Gabagool22 era)
 
 After updating the bot, I ran it to test the new logic and left it running while I went out to play billiards with friends.
 
@@ -53,21 +53,21 @@ This was a fully unattended live run, not a simulation or backtest.
 
 ---
 
-### Story 2 — Repeatable performance (video runs)
+### Story 2 - Repeatable performance (video runs)
 
-The two videos above are from **separate live sessions** on different days. Same codebase, same monitoring and execution pipeline—no manual clicking through Polymarket. That repeatability is what we optimize for: stable automation, not a one-off lucky trade.
+The two videos above are from **separate live sessions** on different days. Same codebase, same monitoring and execution pipeline-no manual clicking through Polymarket. That repeatability is what we optimize for: stable automation, not a one-off lucky trade.
 
 ---
 
-### Story 3 — Bot still running after Gabagool22 stopped
+### Story 3 - Bot still running after Gabagool22 stopped
 
 <a id="story-3--bot-still-running-after-gabagool22-stopped"></a>
 
-Gabagool22 eventually **slowed down and stopped being a practical copy target**—fewer trades, different behavior, or simply going inactive. A lot of copy traders hit the same wall: the wallet that worked last month goes quiet, and their bot looks "broken" when the real issue is an **empty signal**, not broken software.
+Gabagool22 eventually **slowed down and stopped being a practical copy target**-fewer trades, different behavior, or simply going inactive. A lot of copy traders hit the same wall: the wallet that worked last month goes quiet, and their bot looks "broken" when the real issue is an **empty signal**, not broken software.
 
 What we did:
 
-- Kept the **same bot** running—no rewrite, no new product
+- Kept the **same bot** running-no rewrite, no new product
 - Updated `target_wallet` to **other active Polymarket wallets**
 - Confirmed the full pipeline still works: trade detection → sizing → order posting → logging
 
@@ -78,19 +78,19 @@ What we saw:
 - ✅ Logs and `state.json` updated as expected
 - ✅ Failures were isolated to market/order edge cases, not "bot died when Gabagool22 left"
 
-#### Perfect copy-trading result — mirroring **securebet**
+#### Perfect copy-trading result - mirroring **securebet**
 
 After switching targets, we copied [**securebet**](https://polymarket.com/@securebet) and captured this side-by-side:
 
 <p align="center">
-  <img src="Realtradehistory/securebet.jpg" alt="Copy trading PnL: bot wallet vs securebet target — matching chart shape" width="100%"/>
+  <img src="Realtradehistory/securebet.jpg" alt="Copy trading PnL: bot wallet vs securebet target - matching chart shape" width="100%"/>
 </p>
 
-**This is what ideal copy trading looks like.** Your bot wallet (left) and the target trader (right) show the **same PnL chart shape** for the day—the same flat period, dip, and recovery spike at the end. Dollar amounts differ because of your sizing settings and balance, but the **curve tracks the leader**, which means trades are being detected and mirrored in sync—not lagging behind or fighting the strategy.
+**This is what ideal copy trading looks like.** Your bot wallet (left) and the target trader (right) show the **same PnL chart shape** for the day-the same flat period, dip, and recovery spike at the end. Dollar amounts differ because of your sizing settings and balance, but the **curve tracks the leader**, which means trades are being detected and mirrored in sync-not lagging behind or fighting the strategy.
 
 Same session, same markets in the activity/history tabs (e.g. the temperature markets visible in the screenshot). That alignment is the proof traders care about: **follow the wallet, get the same equity curve pattern.**
 
-**Takeaway for traders:** This bot is built to follow **whoever you configure**, not one celebrity wallet. When a trader stops working for you, **change the address—not the bot.** Past Gabagool22 results do not guarantee future results on any target.
+**Takeaway for traders:** This bot is built to follow **whoever you configure**, not one celebrity wallet. When a trader stops working for you, **change the address-not the bot.** Past Gabagool22 results do not guarantee future results on any target.
 
 ---
 
@@ -98,22 +98,22 @@ Same session, same markets in the activity/history tabs (e.g. the temperature ma
 
 ### 🎯 Real proof, not just claims
 
-Other Polymarket bots often stop at screenshots. This repo includes **video proof** of live execution plus the stories above—including running correctly **after** the original star trader went inactive.
+Other Polymarket bots often stop at screenshots. This repo includes **video proof** of live execution plus the stories above-including running correctly **after** the original star trader went inactive.
 
 ### 🚀 Architecture & performance
 
-- **WebSocket trade feed** — subscribes to Polymarket's live activity stream for low-latency detection
-- **Async-first** — built on Python `asyncio` with a bounded fill queue so order posting never blocks the WS loop
-- **Persistent state** — dedup keys and open positions saved to `state.json`
+- **WebSocket trade feed** - subscribes to Polymarket's live activity stream for low-latency detection
+- **Async-first** - built on Python `asyncio` with a bounded fill queue so order posting never blocks the WS loop
+- **Persistent state** - dedup keys and open positions saved to `state.json`
 
 ### 💡 Features traders actually use
 
-- **Share batching** — accumulates small target fills until a threshold, then copies the whole chunk (avoids 5-share minimum inflation)
-- **Fixed or percent sizing** — `fixed` USD per copy or `percent_of_target` of the accumulated chunk
-- **Dry-run mode** — log intended copies before going live (`mode: dry_run`)
-- **Taker or maker orders** — FAK taker with slippage cap, or GTC maker with tick offset
-- **Position headroom cap** — global `max_usd_total_in_positions` limit
-- **Silent-connection watchdog** — exits on zombie WS so a supervisor can restart cleanly
+- **Share batching** - accumulates small target fills until a threshold, then copies the whole chunk (avoids 5-share minimum inflation)
+- **Fixed or percent sizing** - `fixed` USD per copy or `percent_of_target` of the accumulated chunk
+- **Dry-run mode** - log intended copies before going live (`mode: dry_run`)
+- **Taker or maker orders** - FAK taker with slippage cap, or GTC maker with tick offset
+- **Position headroom cap** - global `max_usd_total_in_positions` limit
+- **Silent-connection watchdog** - exits on zombie WS so a supervisor can restart cleanly
 
 ### 📈 Comparison
 
@@ -150,8 +150,8 @@ Other Polymarket bots often stop at screenshots. This repo includes **video proo
 ### Prerequisites
 
 - **Python 3.10+**
-- **Polygon wallet** — USDC for trading, POL/MATIC for gas (when `mode: real`)
-- **Polymarket CLOB API credentials** — required for live order posting
+- **Polygon wallet** - USDC for trading, POL/MATIC for gas (when `mode: real`)
+- **Polymarket CLOB API credentials** - required for live order posting
 
 ## Installation
 
@@ -162,7 +162,7 @@ cd polymarket-copy-trading-bot
 pip install -r requirements.txt
 
 cp config.yaml.example config.yaml
-# Edit config.yaml — set target_wallet and mode (see Configuration below)
+# Edit config.yaml - set target_wallet and mode (see Configuration below)
 python -m app.main
 ```
 
@@ -201,7 +201,7 @@ Choose an active Polymarket wallet and set `target_wallet` in `config.yaml`. Ver
 ⚠️ **This bot places real trades with real funds when `mode: real`.**
 
 - Start with `mode: dry_run` and confirm fills are mirrored in logs
-- **Rotate targets** when a trader goes quiet—Gabagool22 is a lesson, not a permanent setting
+- **Rotate targets** when a trader goes quiet-Gabagool22 is a lesson, not a permanent setting
 - Set `sizing.max_usd_total_in_positions` conservatively
 - Check `logs/tracecopy.log` regularly; state persists in `state.json`
 - Past performance (including the videos) **does not** guarantee future results
@@ -216,10 +216,10 @@ Choose an active Polymarket wallet and set `target_wallet` in `config.yaml`. Ver
 ## FAQ
 
 **Can I still copy Gabagool22?**  
-You can set any address, but Gabagool22 is **not recommended** anymore—activity dropped. Pick **currently active** traders instead.
+You can set any address, but Gabagool22 is **not recommended** anymore-activity dropped. Pick **currently active** traders instead.
 
 **What if my target stops trading?**  
-The bot keeps running; you won't see new copies until you point `target_wallet` at an active wallet. That's expected—not a bot failure.
+The bot keeps running; you won't see new copies until you point `target_wallet` at an active wallet. That's expected-not a bot failure.
 
 **Does this work on all Polymarket markets?**  
 Standard markets are supported; exotic or illiquid cases may fail individually and get logged/retried.
@@ -231,7 +231,7 @@ Yes. A maintained premium build with extra support is also available via Telegra
 
 ## Author & Contact
 
-**Dexoryn Labs** — Polymarket copy-trading automation
+**Dexoryn Labs** - Polymarket copy-trading automation
 
 - **Telegram**: [@dexoryn](https://t.me/dexoryn) (fastest)
 - **Discord**: `dexoryn_`
@@ -240,9 +240,9 @@ Yes. A maintained premium build with extra support is also available via Telegra
 - **WeChat**: scan to add **DexorynWe**
 
 <p align="center">
-  <img src="dexoryn_tg.jpg" alt="Telegram QR code — @dexoryn" height="280"/>
+  <img src="dexoryn_tg.jpg" alt="Telegram QR code - @dexoryn" height="280"/>
   &nbsp;&nbsp;
-  <img src="dexoryn_wechat.png" alt="WeChat QR code — scan to add DexorynWe as a friend" height="280"/>
+  <img src="dexoryn_wechat.png" alt="WeChat QR code - scan to add DexorynWe as a friend" height="280"/>
 </p>
 
 ---
