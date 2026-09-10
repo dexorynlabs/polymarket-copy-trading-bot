@@ -8,13 +8,6 @@
 > **Need help or an updated build?**  
 > 📱 **Telegram**: [t.me/dexoryn](https://t.me/dexoryn) | 🎮 **Discord**: `dexoryn_`
 
-## Table of Contents
-
-- [Quick Start](#-quick-start)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Contributing](#contributing)
-
 ---
 
 ## 🎥 Live Profit Videos (Historical — Gabagool22)
@@ -149,6 +142,8 @@ Other Polymarket bots often stop at screenshots. This repo includes **video proo
 - Complete beginners who will not monitor logs or rotate targets when activity drops
 
 ---
+
+**Jump to:** [Quick Start](#-quick-start) · [Installation](#installation) · [Configuration](#configuration) · [Contributing](#contributing)
 
 ## 🚀 Quick Start
 
