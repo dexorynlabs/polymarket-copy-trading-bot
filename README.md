@@ -1,12 +1,19 @@
-# Polymarket Bot | Polymarket Trading Bot | Polymarket Copy Trading Bot  
+# Polymarket Copy Trading Bot
 
 **Languages:** [English](README.md) · [中文](README.zh-CN.md) · [Русский](README.ru.md)
 
-> **Automated Polymarket copy trading bot that mirrors active traders in real time**  
+> **Polymarket bot • Polymarket trading bot — automated copy trading that mirrors active traders in real time**  
 > **Live tested • Real on-chain execution • Swap targets anytime**
 
 > **Need help or an updated build?**  
 > 📱 **Telegram**: [t.me/dexoryn](https://t.me/dexoryn) | 🎮 **Discord**: `dexoryn_`
+
+## Table of Contents
+
+- [Quick Start](#-quick-start)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Contributing](#contributing)
 
 ---
 
@@ -143,7 +150,7 @@ Other Polymarket bots often stop at screenshots. This repo includes **video proo
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 
@@ -151,7 +158,7 @@ Other Polymarket bots often stop at screenshots. This repo includes **video proo
 - **Polygon wallet** — USDC for trading, POL/MATIC for gas (when `mode: real`)
 - **Polymarket CLOB API credentials** — required for live order posting
 
-### Installation
+## Installation
 
 ```bash
 git clone https://github.com/dexorynlabs/polymarket-copy-trading-bot.git
