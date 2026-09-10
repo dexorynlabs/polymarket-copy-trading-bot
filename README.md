@@ -1,19 +1,12 @@
-# Polymarket Copy Trading Bot
+# Polymarket Bot | Polymarket Trading Bot | Polymarket Copy Trading Bot  
 
 **Languages:** [English](README.md) · [中文](README.zh-CN.md) · [Русский](README.ru.md)
 
-> **Polymarket bot • Polymarket trading bot — automated copy trading that mirrors active traders in real time**  
+> **Automated Polymarket copy trading bot that mirrors active traders in real time**  
 > **Live tested • Real on-chain execution • Swap targets anytime**
 
 > **Need help or an updated build?**  
 > 📱 **Telegram**: [t.me/dexoryn](https://t.me/dexoryn) | 🎮 **Discord**: `dexoryn_`
-
-## Table of Contents
-
-- [Quick Start](#-quick-start)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Contributing](#contributing)
 
 ---
 
@@ -149,6 +142,8 @@ Other Polymarket bots often stop at screenshots. This repo includes **video proo
 - Complete beginners who will not monitor logs or rotate targets when activity drops
 
 ---
+
+**Jump to:** [Quick Start](#-quick-start) · [Installation](#installation) · [Configuration](#configuration) · [Contributing](#contributing)
 
 ## 🚀 Quick Start
 
