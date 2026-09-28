@@ -94,295 +94,112 @@ Gabagool22 со временем **снизил активность и пере
 
 ---
 
-## 🆕 Что нового в этой сборке
+## 🆕 Что нового
 
-Это **production-grade** бот копирования, а не скрипт на один кошелёк:
-
-- **Multi-wallet copy** - несколько целей с отдельным sizing и лимитом экспозиции
-- **Меньшая задержка** - WebSocket-детекция, ограниченная очередь fills, CLOB keep-warm
-- **Web-дашборд** - цели, активность, позиции и настройки в браузере
-- **Polymarket Perps** - копирование perpetuals-портфеля лидера (отдельный venue от predictions)
-- **Зеркалирование выходов** - опциональное пропорциональное копирование SELL / close (`copy_closes`)
-- **Telegram-алерты** - уведомления об успехе, сбоях и ошибках копирования
-
-Видео выше - из пайплайна **predictions**. Perps и дашборд новее - начните с `dry_run`, проверьте активность в UI, затем переключите `real`.
+Multi-wallet copy, web-дашборд (`http://127.0.0.1:8787`), Polymarket Perps, WebSocket с низкой задержкой, опциональное зеркало выходов (`copy_closes`) и Telegram. Видео выше - **predictions**; начните с `dry_run`, проверьте **Activity**, затем `real`.
 
 ---
 
 ## ⭐ Почему этот бот
 
-### 🎯 Реальные доказательства, а не слова
+**Live-видео** и реальные истории, не скриншоты. WebSocket, sizing на цель, batching, dry-run и смена цели в дашборде, когда лидер затих (История 3).
 
-У многих ботов Polymarket - только скриншоты. В репозитории - **видео live-исполнения** и истории выше, включая работу **после** ухода звёздного трейдера.
+| | Этот бот | Альтернативы |
+|---|----------|--------------|
+| Live-доказательства | ✅ Видео + истории | ❌ Только слова |
+| Multi-wallet + дашборд | ✅ | ❌ Один адрес / CLI |
+| Perps + зеркало выходов | ✅ | ❌ Только predictions / вход |
+| Цель затихла | ✅ Смена в UI | ⚠️ Один кошелёк |
 
-### 🚀 Архитектура и производительность
-
-- **WebSocket activity feed** - подписка на live-поток сделок Polymarket
-- **Non-blocking pipeline** - ограниченная очередь fills, постинг ордеров не блокирует WS
-- **CLOB keep-warm** - HTTP-соединения остаются «горячими» между копи-ордерами
-- **Per-target portfolios** - отдельный sizing, dedup и экспозиция на кошелёк
-- **SQLite history** - `history.db` для ленты активности и разбора сделок
-- **Settings override** - правки в дашборде сохраняются в `settings.yaml` без рестарта
-
-### 💡 Функции для трейдеров
-
-- **Multi-target** - несколько лидеров predictions или perps (venue predictions)
-- **Web-дашборд** - overview, targets, activity, positions, settings на `http://127.0.0.1:8787`
-- **Predictions + Perps** - переключение venue в дашборде (один активный venue за раз)
-- **Copy closes** - зеркало выходов цели, не только входов
-- **Share batching** - накопление мелких fills перед постингом
-- **Fixed или percent sizing** - USD или доля chunk лидера на цель
-- **Dry-run** - `mode: dry_run` в `config.yaml` без реальных ордеров
-- **Taker / Maker** - FAK с лимитом slippage или GTC maker
-- **Telegram** - опциональные push при копировании и ошибках
-- **Watchdog** - reconnect или exit при «зомби» WebSocket
-
-### 📈 Сравнение
-
-| Функция | Этот бот | Типичные альтернативы |
-|---------|----------|------------------------|
-| **Доказательство live** | ✅ Видео + истории | ❌ Только слова |
-| **Multi-wallet** | ✅ Лимиты на цель | ❌ Один адрес |
-| **Web-дашборд** | ✅ Встроен | ❌ Только CLI / `.env` |
-| **Perps copy** | ✅ | ❌ Только predictions |
-| **Зеркало выходов** | ✅ Опционально | ❌ Только вход |
-| **Видимость latency** | ✅ График в дашборде | ❌ |
-| **Цель затихла** | ✅ Смена в UI | ⚠️ Привязка к одному KOL |
-| **WebSocket** | ✅ | ⚠️ Только polling |
-| **Dry-run** | ✅ | ❌ |
-| **Share batching** | ✅ | ❌ |
-| **Persistent state** | ✅ `state.json` + history DB | ⚠️ Ограничено |
+**Подходит:** пассивный копи-трейдинг, Python 3.10+, on-chain риски, контроль **Activity**. **Не подходит:** гарантированная прибыль, predictions + perps одновременно, публичный дашборд без `web.token`.
 
 ---
 
-## 🎯 Кому подходит
-
-**Подходит:**
-
-- Трейдерам с **пассивным следованием** за доверенными кошельками
-- Тем, кто предпочитает **дашборд** вместо правки YAML на каждую смену цели
-- Копирующим **нескольких лидеров** или ротирующим цели при падении активности
-- Пользователям с **Python 3.10+** и локальным процессом бота
-- Тем, кто понимает **риски on-chain**, gas и смену лидеров
-
-**Не подходит:**
-
-- Тем, кто ждёт **гарантированную** прибыль без контроля
-- Тем, кому нужны **predictions и perps одновременно** (активен один venue)
-- Тем, кто открывает дашборд в интернет **без** `web.token`
-- Новичкам, которые не смотрят логи и ленту активности
-
----
-
-**Перейти:** [Быстрый старт](#-быстрый-старт) · [Дашборд](#-дашборд) · [Perps](#-perps-копи-трейдинг) · [Конфигурация](#конфигурация) · [Участие в разработке](#участие-в-разработке)
+**Перейти:** [Быстрый старт](#-быстрый-старт) · [Конфигурация](#конфигурация) · [FAQ](#faq)
 
 ## 🚀 Быстрый старт
 
-### Требования
-
-- **Python 3.10+**
-- **Node.js 18+** (только если собираете UI дашборда сами)
-- **Кошелёк Polygon** - USDC для predictions, POL/MATIC для gas (при `mode: real`)
-- **Учётные данные Polymarket CLOB API** - для live-ордеров на prediction markets
-- **Пополненный Perps-аккаунт** - только для live-копирования Polymarket Perps
-
-## Установка
+**Нужно:** Python 3.10+, кошелёк Polygon + CLOB API (`real` predictions), пополненный Perps (`real` perps). Node.js 18+ только для пересборки UI.
 
 ```bash
 git clone https://github.com/dexorynlabs/polymarket-trading-bot-python.git
 cd polymarket-trading-bot-python
-
 pip install -r requirements.txt
-
-cp config.yaml.example config.yaml
-# Отредактируйте config.yaml - mode, web, секреты polymarket (real mode)
-
+cp config.yaml.example config.yaml   # mode, web, секреты polymarket
 python -m app.main
 ```
 
-### Первый запуск (рекомендуется)
+1. **`mode: dry_run`**, пока fills не появятся в **Activity**
+2. **http://127.0.0.1:8787** → **Targets** → адрес, venue (`predictions` | `perps`), sizing → **Start**
+3. **`mode: real`**, перезапуск, Start с малым размером
 
-1. Оставьте **`mode: dry_run`**, пока не увидите fills цели во вкладке **Activity**
-2. Откройте **http://127.0.0.1:8787** (по умолчанию `web.host` / `web.port`)
-3. Добавьте цели на **Targets** - адрес, venue (`predictions` или `perps`), sizing
-4. Нажмите **Start** на нужном venue
-5. Когда поведение устраивает, установите **`mode: real`**, перезапустите и Start с малым размером
+**Дашборд:** Overview, Targets, Activity, Positions, Settings → `targets.yaml` / `settings.yaml`. Задайте `web.token` перед доступом извне localhost.
 
-Сборка UI из исходников (опционально; production → `app/web/static/`):
+**Perps:** `venue: perps`, пополните на [polymarket.com](https://polymarket.com). Один venue за раз - predictions **или** perps.
 
-```bash
-cd ui
-npm install
-npm run build
-```
-
-См. [`ui/README.md`](../ui/README.md) для `dev`, `dev:mock` и auth.
+UI (опционально): `cd ui && npm install && npm run build` · см. [`ui/README.md`](../ui/README.md)
 
 **Помощь:** Telegram [@dexoryn](https://t.me/dexoryn)
 
 ---
 
-## 🖥 Дашборд
-
-Встроенный дашборд - основной способ работы после первичной настройки `config.yaml`.
-
-| Страница | Назначение |
-|----------|------------|
-| **Overview** | Статус копирования, активный venue, snapshot latency |
-| **Targets** | Добавление, правка, pause лидеров |
-| **Activity** | Live-лента fills и результатов копирования |
-| **Positions** | Открытая экспозиция и headroom |
-| **Settings** | Sizing, slippage, уведомления → `settings.yaml` |
-
-URL по умолчанию: **http://127.0.0.1:8787**
-
-> Держите `web.host: 127.0.0.1`, если не задан `web.token`. Не публикуйте дашборд без аутентификации.
-
-Если UI запрашивает token, задайте `web.token` в `config.yaml` и введите то же значение в Settings.
-
----
-
-## 📈 Perps копи-трейдинг
-
-Копирование позиций **Polymarket Perps** с целевого аккаунта:
-
-- Изменения портфеля детектируются polling публичного Perps-профиля цели
-- Ордера - IOC limits по mark ± настроенный slippage
-- Цели с `venue: perps` в дашборде или `targets.yaml`
-- **`copy.venue: perps`** при Start включает Perps-пайплайн
-- Сессия delegated signing в `perps_session.json` (gitignored)
-- Пополните Perps на [polymarket.com](https://polymarket.com) перед live
-
-**Один venue за раз:** при копировании работает либо **predictions**, либо **perps** - не оба сразу. Переключайте venue в дашборде.
-
----
-
 ## Конфигурация
 
-Секреты и глобальный mode - в **`config.yaml`**. Цели и большинство настроек - в **дашборде** (`targets.yaml`, `settings.yaml`).
+Секреты и mode в **`config.yaml`**. Цели и настройки - в **дашборде** (`targets.yaml`, `settings.yaml`). Дашборд перекрывает config.
 
-Начните с `mode: dry_run`. Изменения trading-настроек в дашборде перекрывают ключи в `config.yaml`.
+| Ключ | Назначение |
+|------|------------|
+| `mode` | `dry_run` или `real` |
+| `copy.venue` | `predictions` или `perps` |
+| `web.*` | host, port, token |
+| `risk.max_open_usd_total` | cap по prediction-целям (опц.) |
+| `execution.order_type` | `taker` (FAK) или `maker` (GTC) |
+| `slippage.entry_bps_max` | макс. slippage BUY (bps) |
 
-### Основные настройки `config.yaml`
+При `mode: real` - `polymarket:`. На цель: `wallet`, `venue`, `enabled`, `copy_closes`, `sizing.*`. Legacy `target_wallet` мигрирует при первом запуске. Полный справочник: **`config.yaml.example`**.
 
-| Настройка | Описание | Пример |
-|-----------|----------|--------|
-| `mode` | `dry_run` логирует; `real` постит ордера | `dry_run` |
-| `copy.venue` | Начальный venue при Start | `predictions` |
-| `web.enabled` | Включить дашборд | `true` |
-| `web.host` / `web.port` | Адрес bind | `127.0.0.1` / `8787` |
-| `web.token` | Опциональная auth | `""` |
-| `risk.max_open_usd_total` | Опциональный cap по всем prediction-целям | `null` |
-| `execution.order_type` | `taker` (FAK) или `maker` (GTC) | `taker` |
-| `slippage.entry_bps_max` | Макс. slippage на BUY (bps) | `1000` |
-| `perps.poll_interval_s` | Интервал poll Perps | `1.0` |
-| `telegram.enabled` | Telegram push | `false` |
-
-При `mode: real` заполните `polymarket:` (`private_key`, `wallet_address`, `api_key`, `api_secret`, `passphrase`). Maker, минимумы, dedup, watchdog - в **`config.yaml.example`**.
-
-### Цели (`targets.yaml` / дашборд)
-
-При первом запуске цели из `config.yaml` seed'ят `targets.yaml`. Далее управляйте на **Targets**.
-
-| Поле | Описание |
-|------|----------|
-| `name` | Метка в дашборде |
-| `venue` | `predictions` (CLOB) или `perps` |
-| `wallet` | Proxy wallet лидера (predictions) или адрес аккаунта (perps) |
-| `enabled` | Pause без удаления |
-| `copy_closes` | Зеркало SELL / сокращений |
-| `sizing.mode` | predictions: `fixed` / `percent_of_target`; perps: `percent_of_target` / `fixed_notional` |
-| `sizing.max_open_usd` / `max_open_notional_usd` | Cap экспозиции на цель |
-
-Legacy с одним `target_wallet` и top-level `sizing:` **автомигрирует** в одну цель при первом запуске.
-
-### Выбор трейдеров
-
-Проверяйте активность и риск на [polymarket.com](https://polymarket.com). Ротируйте лидеров при падении активности - Gabagool22 это урок, не постоянная настройка.
+Выбирайте активных трейдеров на [polymarket.com](https://polymarket.com), ротируйте при падении активности.
 
 ---
 
-## Безопасность и риски
+## Безопасность
 
-⚠️ **При `mode: real` бот совершает реальные сделки.**
-
-- Начните с `mode: dry_run` и проверьте fills в **Activity**
-- **Меняйте цели**, когда трейдер затих
-- Консервативные caps на цель и опционально `risk.max_open_usd_total`
-- Смотрите `logs/copybot.log` и вкладку **Activity**
-- Прошлые результаты (включая видео) **не гарантируют** будущее
-
-1. Отдельный кошелёк с ограниченным балансом  
-2. Не коммитьте `config.yaml`, `targets.yaml`, `settings.yaml` с live-секретами  
-3. Задайте `web.token`, если дашборд доступен не только с localhost  
-4. Уметь остановить бота (`Ctrl+C`) и pause из дашборда  
-5. Изучать кошельки перед добавлением целей  
+⚠️ **`mode: real` - реальные средства.** Dry-run, отдельный кошелёк, caps, `logs/copybot.log` и **Activity**, не коммитьте секреты. Прошлое не гарантирует будущее.
 
 ---
 
 ## FAQ
 
-**Можно копировать несколько кошельков?**  
-Да на venue **predictions** - несколько enabled-целей параллельно, у каждой свой cap. Perps поддерживает несколько целей; активен один **venue** (predictions или perps) за раз.
+**Несколько кошельков?** Да на predictions (параллельно, cap на цель). Один venue активен.
 
-**Predictions и perps одновременно?**  
-Нет. Переключайте venue в дашборде.
+**Цель перестала торговать?** Бот работает; копий не будет, пока не включите активную цель.
 
-**Можно ли ещё копировать Gabagool22?**  
-Любой адрес можно указать, но Gabagool22 **не рекомендуется** - активность упала.
+**Нужен `config.yaml`?** Да для mode, API, web/Telegram. Цели - в дашборде.
 
-**Что если цель перестала торговать?**  
-Бот продолжит работать; новых копий не будет, пока не включите активную цель. Это нормально.
-
-**Нужен ли `config.yaml` с дашбордом?**  
-Да для `mode`, API-секретов и web/Telegram. Цели - в дашборде / `targets.yaml`.
-
-**Где логи и история?**  
-`logs/copybot.log`, `history.db`, `state.json`, `settings.yaml` (в gitignore, кроме example config).
-
-**Работает ли на всех рынках Polymarket?**  
-Стандартные - да; illiquid/edge cases могут падать поштучно с логом.
-
-**Это open source?**  
-Да. Также есть premium-сборка с поддержкой в Telegram.
+**Логи?** `logs/copybot.log`, `history.db`, `state.json`, `settings.yaml`.
 
 ---
 
 ## Автор и контакты
 
-**Dexoryn Labs** - автоматизация копи-трейдинга Polymarket
-
-- **Telegram**: [@dexoryn](https://t.me/dexoryn) (быстрее всего)
-- **Discord**: `dexoryn_`
-- **Twitter**: [@dexoryn](https://x.com/dexoryn)
-- **GitHub**: [@dexorynLabs](https://github.com/dexorynLabs)
-- **WeChat**: отсканируйте, чтобы добавить **DexorynWe**
+**Dexoryn Labs** · [@dexoryn](https://t.me/dexoryn) · Discord `dexoryn_` · [@dexoryn](https://x.com/dexoryn) · [@dexorynLabs](https://github.com/dexorynLabs)
 
 <p align="center">
-  <img src="dexoryn_tg.jpg" alt="QR-код Telegram - @dexoryn" height="280"/>
+  <img src="dexoryn_tg.jpg" alt="QR Telegram - @dexoryn" height="220"/>
   &nbsp;&nbsp;
-  <img src="dexoryn_wechat.png" alt="QR-код WeChat - добавить DexorynWe в друзья" height="280"/>
+  <img src="dexoryn_wechat.png" alt="QR WeChat - DexorynWe" height="220"/>
 </p>
 
 ---
 
 ## Участие в разработке
 
-1. Fork репозитория  
-2. `git checkout -b feature/your-feature`  
-3. Commit и push  
-4. Откройте Pull Request  
-
-Dev: `pip install -r requirements-dev.txt`, затем `pytest`.
+Fork → branch → PR. Dev: `pip install -r requirements-dev.txt` && `pytest`.
 
 ---
 
 ## Правовое предупреждение
 
-Торговля на Polymarket сопряжена с **существенным риском убытков**. Dexoryn не несёт ответственности за потери при использовании ПО. Вы отвечаете за безопасность кошелька, выбор целей и капитал.
+Торговля на Polymarket сопряжена с **существенным риском убытков**. Dexoryn не несёт ответственности за потери. **Торгуйте только средствами, потерю которых вы можете себе позволить.**
 
-**Торгуйте только средствами, потерю которых вы можете себе позволить.**
-
----
-
-Если проект полезен - поставьте ⭐ Star или откройте issue/PR. Вопросы: Telegram [@dexoryn](https://t.me/dexoryn).
+Вопросы: Telegram [@dexoryn](https://t.me/dexoryn) · ⭐ Star, если полезно.
