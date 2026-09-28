@@ -4,7 +4,7 @@ Thanks for helping improve this project. Issues and pull requests are welcome.
 
 ## Before you start
 
-- Read the [README](README.md) for setup and safety notes.
+- Read the [README](../README.md) for setup and safety notes.
 - **Never commit secrets** - `config.yaml`, `targets.yaml`, `settings.yaml`, wallet keys, or API credentials.
 - Trading bots carry financial risk. Test in `dry_run` before suggesting changes that affect live execution.
 
@@ -21,7 +21,7 @@ cp config.yaml.example config.yaml
 pytest
 ```
 
-Optional UI work: see [`ui/README.md`](ui/README.md).
+Optional UI work: see [`ui/README.md`](../ui/README.md).
 
 ## Pull requests
 

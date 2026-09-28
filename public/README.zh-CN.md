@@ -238,9 +238,9 @@ UI 重建（可选）：`cd ui && npm install && npm run build` · 见 [`ui/READ
 
 ## 贡献
 
-详见 [CONTRIBUTING.md](../CONTRIBUTING.md)。简要：Fork → 分支 → `pytest` → PR。
+详见 [CONTRIBUTING.md](../.github/CONTRIBUTING.md)。简要：Fork → 分支 → `pytest` → PR。
 
-社区：[行为准则](../CODE_OF_CONDUCT.md) · [安全](../.github/SECURITY.md) · [MIT 许可证](../LICENSE)
+社区：[行为准则](../.github/CODE_OF_CONDUCT.md) · [安全](../.github/SECURITY.md) · [MIT 许可证](../LICENSE)
 
 ---
 

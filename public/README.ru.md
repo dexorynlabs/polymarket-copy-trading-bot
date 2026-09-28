@@ -238,9 +238,9 @@ UI (опционально): `cd ui && npm install && npm run build` · см. [`
 
 ## Участие в разработке
 
-См. [CONTRIBUTING.md](../CONTRIBUTING.md). Кратко: fork → branch → `pytest` → PR.
+См. [CONTRIBUTING.md](../.github/CONTRIBUTING.md). Кратко: fork → branch → `pytest` → PR.
 
-Сообщество: [Code of Conduct](../CODE_OF_CONDUCT.md) · [Security](../.github/SECURITY.md) · [MIT License](../LICENSE)
+Сообщество: [Code of Conduct](../.github/CODE_OF_CONDUCT.md) · [Security](../.github/SECURITY.md) · [MIT License](../LICENSE)
 
 ---
 

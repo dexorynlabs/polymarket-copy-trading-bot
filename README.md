@@ -238,9 +238,9 @@ Yes. A maintained premium build with extra support is also available via Telegra
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Quick start: fork → branch → `pytest` → PR.
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md). Quick start: fork → branch → `pytest` → PR.
 
-Community: [Code of Conduct](CODE_OF_CONDUCT.md) · [Security](.github/SECURITY.md) · [MIT License](LICENSE)
+Community: [Code of Conduct](.github/CODE_OF_CONDUCT.md) · [Security](.github/SECURITY.md) · [MIT License](LICENSE)
 
 ---
 
