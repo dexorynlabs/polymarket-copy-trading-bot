@@ -238,12 +238,9 @@ Yes. A maintained premium build with extra support is also available via Telegra
 
 ## Contributing
 
-1. Fork the repo  
-2. `git checkout -b feature/your-feature`  
-3. Commit and push  
-4. Open a Pull Request  
+See [CONTRIBUTING.md](CONTRIBUTING.md). Quick start: fork → branch → `pytest` → PR.
 
-Dev: `pip install -r requirements-dev.txt` then `pytest`.
+Community: [Code of Conduct](CODE_OF_CONDUCT.md) · [Security](.github/SECURITY.md) · [MIT License](LICENSE)
 
 ---
 

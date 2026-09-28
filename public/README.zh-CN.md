@@ -238,12 +238,9 @@ UI 重建（可选）：`cd ui && npm install && npm run build` · 见 [`ui/READ
 
 ## 贡献
 
-1. Fork 本仓库  
-2. `git checkout -b feature/your-feature`  
-3. 提交并推送  
-4. 发起 Pull Request  
+详见 [CONTRIBUTING.md](../CONTRIBUTING.md)。简要：Fork → 分支 → `pytest` → PR。
 
-开发：`pip install -r requirements-dev.txt`，然后 `pytest`。
+社区：[行为准则](../CODE_OF_CONDUCT.md) · [安全](../.github/SECURITY.md) · [MIT 许可证](../LICENSE)
 
 ---
 

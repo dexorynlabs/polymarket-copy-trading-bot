@@ -238,12 +238,9 @@ UI (опционально): `cd ui && npm install && npm run build` · см. [`
 
 ## Участие в разработке
 
-1. Fork репозитория  
-2. `git checkout -b feature/your-feature`  
-3. Commit и push  
-4. Откройте Pull Request  
+См. [CONTRIBUTING.md](../CONTRIBUTING.md). Кратко: fork → branch → `pytest` → PR.
 
-Dev: `pip install -r requirements-dev.txt`, затем `pytest`.
+Сообщество: [Code of Conduct](../CODE_OF_CONDUCT.md) · [Security](../.github/SECURITY.md) · [MIT License](../LICENSE)
 
 ---
 
