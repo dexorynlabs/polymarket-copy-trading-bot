@@ -16,7 +16,7 @@
 
 **钱包（历史跟单目标）：** `0x6031b6eed1c97e853c6e0f03ad3ce3529351f96d`
 
-> **说明：** Gabagool22 已不再是可靠的跟单对象。视频仍可证明机器人曾在生产环境正常运行；在仪表盘（或 `targets.yaml`）中添加**当前仍活跃**的钱包作为目标。见下方 [故事 3](#story-3--bot-still-running-after-gabagool22-stopped)。
+> **说明：** Gabagool22 已不再是可靠的跟单对象。视频仍可证明实盘生产环境运行--见下方 [故事 3](#story-3--bot-still-running-after-gabagool22-stopped) 了解如何更换活跃领头。
 
 ### 视频 1 - 实盘跟单运行
 
@@ -94,48 +94,59 @@ Gabagool22 最终**交易减少，不再适合作为跟单目标**--成交变少
 
 ---
 
-## 🆕 本版本新功能
+## ⭐ 功能概览
 
-多钱包跟单、Web 仪表盘（`http://127.0.0.1:8787`）、Polymarket 永续、WebSocket 低延迟路径、可选退出镜像（`copy_closes`）与 Telegram 提醒。上方视频来自**预测市场**--请先在 `dry_run` 下确认 **活动**，再切换 `real`。
+上方视频与故事来自**预测市场**流水线。本版本在此基础上提供完整平台：
 
----
+- **多钱包跟单** - 多个领头，各自 sizing 与上限
+- **Web 仪表盘** `http://127.0.0.1:8787` - 目标、活动、持仓、设置
+- **预测 + 永续** - 同一时间仅一个 venue，在仪表盘中切换
+- **WebSocket 检测**、份额批处理、可选退出镜像（`copy_closes`）、Telegram 提醒
+- **模拟模式**与持久化状态（`state.json`、`history.db`）
 
-## ⭐ 为什么选择本机器人
-
-**实盘视频**与真实故事，而非截图。WebSocket 检测、按目标 sizing、份额批处理、模拟模式，以及领头停更时在仪表盘换目标（见故事 3）。
-
-| | 本机器人 | 常见替代 |
-|---|----------|----------|
-| 实盘证明 | ✅ 视频 + 故事 | ❌ 仅宣传 |
+| 功能 | 本机器人 | 常见替代 |
+|------|----------|----------|
+| 实盘执行证明 | ✅ 上方视频与故事 | ❌ 仅宣传 |
 | 多钱包 + 仪表盘 | ✅ | ❌ 单地址 / CLI |
 | 永续 + 退出镜像 | ✅ | ❌ 仅预测 / 仅入场 |
-| 目标停更后仍可用 | ✅ UI 换目标 | ⚠️ 绑定单一钱包 |
+| 领头停更后换目标 | ✅ 仪表盘 | ⚠️ 绑定单一钱包 |
+| WebSocket + 模拟模式 | ✅ | ⚠️ 轮询 / 无模拟 |
 
-**适合：** 能运行 Python 3.10+、理解链上风险、会查看 **活动** 的被动跟单者。**不适合：** 保证盈利、同时跟单预测+永续、或未设 `web.token` 就公开仪表盘。
+**适合：** 使用 **Python 3.10+** 并会查看 **活动** 的被动跟单者。**不适合：** 保证盈利、同时跟单预测+永续、或未设 `web.token` 就公开仪表盘。
 
 ---
 
-**跳转：** [快速开始](#-快速开始) · [配置](#配置) · [常见问题](#常见问题)
+**跳转：** [快速开始](#-快速开始) · [仪表盘](#-仪表盘) · [配置](#配置) · [常见问题](#常见问题)
 
 ## 🚀 快速开始
 
-**需要：** Python 3.10+、Polygon 钱包 + CLOB API（`real` 预测）、已充值永续账户（`real` 永续）。仅重建 UI 时需要 Node.js 18+。
+### 环境要求
+
+- **Python 3.10+**
+- **Polygon 钱包** - 预测市场用 USDC，gas 用 POL/MATIC（`mode: real`）
+- **Polymarket CLOB API 凭证** - 预测市场实盘下单
+- **已充值的永续账户** - 仅在 `real` 模式下跟单永续时需要
+- **Node.js 18+** - 仅在你自行构建仪表盘 UI 时需要
+
+### 安装
 
 ```bash
 git clone https://github.com/dexorynlabs/polymarket-trading-bot-python.git
 cd polymarket-trading-bot-python
+
 pip install -r requirements.txt
-cp config.yaml.example config.yaml   # mode、web、polymarket 密钥
+
+cp config.yaml.example config.yaml
+# 编辑 config.yaml：mode、web 设置、polymarket 密钥（real 模式）
+
 python -m app.main
 ```
 
-1. 保持 **`mode: dry_run`**，直到 **活动** 中出现成交
-2. 打开 **http://127.0.0.1:8787** → **目标** → 添加钱包、venue（`predictions` | `perps`）、sizing → **Start**
-3. 确认无误后设 **`mode: real`**，重启，小仓位再次 Start
+### 首次运行
 
-**仪表盘：** 概览、目标、活动、持仓、设置（写入 `targets.yaml` / `settings.yaml`）。暴露到 localhost 外请先设 `web.token`。
-
-**永续：** 目标 `venue: perps`，在 [polymarket.com](https://polymarket.com) 充值。同一时间仅一个 venue--预测或永续。
+1. 在 `config.yaml` 中保持 **`mode: dry_run`**
+2. 打开 **http://127.0.0.1:8787** → **目标** → 添加钱包、venue、sizing → **Start**
+3. 在 **活动** 中确认成交后，设 **`mode: real`**，重启，小仓位再次 **Start**
 
 UI 重建（可选）：`cd ui && npm install && npm run build` · 见 [`ui/README.md`](../ui/README.md)
 
@@ -143,63 +154,103 @@ UI 重建（可选）：`cd ui && npm install && npm run build` · 见 [`ui/READ
 
 ---
 
-## 配置
+## 🖥 仪表盘
 
-密钥与全局 mode 在 **`config.yaml`**。目标与调参在**仪表盘**（或 `targets.yaml` / `settings.yaml`）。仪表盘会覆盖对应 config 项。
+完成一次性 `config.yaml` 配置后，通过仪表盘运行机器人。目标保存至 `targets.yaml`，调参保存至 `settings.yaml`。旧版单 `target_wallet` 首次启动自动迁移。
 
-| 键 | 用途 |
-|----|------|
-| `mode` | `dry_run` 或 `real` |
-| `copy.venue` | `predictions` 或 `perps` |
-| `web.*` | 仪表盘 host、port、可选 token |
-| `risk.max_open_usd_total` | 预测目标总敞口上限（可选） |
-| `execution.order_type` | `taker`（FAK）或 `maker`（GTC） |
-| `slippage.entry_bps_max` | BUY 最大滑点（bps） |
+| 页面 | 用途 |
+|------|------|
+| **概览** | 跟单状态、活跃 venue、延迟快照 |
+| **目标** | 添加、编辑、启用或暂停领头钱包 |
+| **活动** | 检测到的成交与跟单结果实时流 |
+| **持仓** | 当前敞口与剩余额度 |
+| **设置** | sizing、滑点、通知 |
 
-`mode: real` 时填写 `polymarket:` 凭证。每目标：`wallet`、`venue`、`enabled`、`copy_closes`、`sizing.*`。旧版单 `target_wallet` 首次启动自动迁移。完整说明见 **`config.yaml.example`**。
+**永续：** 目标 `venue: perps`，在 [polymarket.com](https://polymarket.com) 充值。轮询领头公开资料检测组合变化；订单为 mark ± 滑点的 IOC 限价单。
 
-在 [polymarket.com](https://polymarket.com) 选择活跃交易者，活跃度下降时轮换。
+> **同一时间仅一个 venue** - 预测或永续，不能同时。除非设置了 `web.token`，请保持 `web.host: 127.0.0.1`。
 
 ---
 
-## 安全
+## 配置
 
-⚠️ **`mode: real` 使用真实资金。** 先 dry-run、专用小余额钱包、设单目标上限、查看 `logs/copybot.log` 与 **活动**，切勿提交密钥。过往结果不保证未来收益。
+| 层级 | 文件 | 用途 |
+|------|------|------|
+| 启动 | `config.yaml` | `mode`、API 密钥、web/Telegram、全局默认 |
+| 运行 | `targets.yaml` | 领头钱包（在 **目标** 页管理） |
+| 运行 | `settings.yaml` | 交易调参（在 **设置** 页管理） |
+
+仪表盘值会覆盖 `config.yaml` 中的对应项。
+
+### `config.yaml` 核心项
+
+| 设置 | 说明 | 示例 |
+|------|------|------|
+| `mode` | `dry_run` 模拟；`real` 提交订单 | `dry_run` |
+| `copy.venue` | 开始跟单时的初始 venue | `predictions` |
+| `web.enabled` | 启用仪表盘 | `true` |
+| `web.host` / `web.port` | 绑定地址 | `127.0.0.1` / `8787` |
+| `web.token` | 可选仪表盘认证 | `""` |
+| `risk.max_open_usd_total` | 预测目标总敞口上限（可选） | `null` |
+| `execution.order_type` | `taker`（FAK）或 `maker`（GTC） | `taker` |
+| `slippage.entry_bps_max` | BUY 最大滑点（bps） | `1000` |
+
+`mode: real` 时填写 `polymarket:`。每目标字段（`wallet`、`venue`、`enabled`、`copy_closes`、`sizing.*`）在仪表盘中设置。完整说明见 **`config.yaml.example`**。
+
+---
+
+## 安全与风险
+
+⚠️ **`mode: real` 使用真实资金。** 请使用余额有限的专用钱包、设置保守的单目标上限、查看 `logs/copybot.log`、切勿提交密钥。过往表现不保证未来结果。
 
 ---
 
 ## 常见问题
 
-**多个钱包？** 预测 venue 可并行，各有上限。同一时间仅一个 venue 活跃。
+**用了仪表盘还需要 `config.yaml` 吗？**  
+需要 - 用于 `mode`、API 密钥与 web/Telegram。目标与日常调参在仪表盘中管理。
 
-**目标停止交易？** 机器人继续运行，启用新目标前无新跟单。
+**日志与状态存在哪里？**  
+`logs/copybot.log`、`history.db`、`state.json`、`settings.yaml`（均已 gitignore，示例配置除外）。
 
-**还需要 `config.yaml`？** 需要 mode、API 密钥、web/Telegram。目标在仪表盘中管理。
-
-**日志？** `logs/copybot.log`、`history.db`、`state.json`、`settings.yaml`。
+**是否开源？**  
+是。另有维护中的高级版本，可通过 Telegram 获取额外支持。
 
 ---
 
 ## 作者与联系
 
-**Dexoryn Labs** · [@dexoryn](https://t.me/dexoryn) · Discord `dexoryn_` · [@dexoryn](https://x.com/dexoryn) · [@dexorynLabs](https://github.com/dexorynLabs)
+**Dexoryn Labs** - Polymarket 跟单自动化
+
+- **Telegram**：[@dexoryn](https://t.me/dexoryn)（回复最快）
+- **Discord**：`dexoryn_`
+- **Twitter**：[@dexoryn](https://x.com/dexoryn)
+- **GitHub**：[@dexorynLabs](https://github.com/dexorynLabs)
+- **微信**：扫码添加 **DexorynWe**
 
 <p align="center">
-  <img src="dexoryn_tg.jpg" alt="Telegram 二维码 - @dexoryn" height="220"/>
+  <img src="dexoryn_tg.jpg" alt="Telegram 二维码 - @dexoryn" height="260"/>
   &nbsp;&nbsp;
-  <img src="dexoryn_wechat.png" alt="微信二维码 - DexorynWe" height="220"/>
+  <img src="dexoryn_wechat.png" alt="微信二维码 - DexorynWe" height="260"/>
 </p>
 
 ---
 
 ## 贡献
 
-Fork → 分支 → PR。开发：`pip install -r requirements-dev.txt` && `pytest`。
+1. Fork 本仓库  
+2. `git checkout -b feature/your-feature`  
+3. 提交并推送  
+4. 发起 Pull Request  
+
+开发：`pip install -r requirements-dev.txt`，然后 `pytest`。
 
 ---
 
 ## 法律声明
 
-在 Polymarket 交易存在**重大亏损风险**。Dexoryn 不对使用本软件造成的损失负责。**请仅使用您能承受损失的资金。**
+在 Polymarket 交易存在**重大亏损风险**。Dexoryn 不对使用本软件造成的损失负责。钱包安全、目标选择与资金风险由您自行承担。
+
+**请仅使用您能承受损失的资金进行交易。**
 
 问题咨询：Telegram [@dexoryn](https://t.me/dexoryn) · 有帮助请 ⭐ Star。

@@ -16,7 +16,7 @@ These sessions were recorded while **@gabagool22** was actively trading. They sh
 
 **Wallet (historical target):** `0x6031b6eed1c97e853c6e0f03ad3ce3529351f96d`
 
-> **Note:** Gabagool22 is no longer a reliable copy target. The videos remain proof that the bot worked in production; add **active wallets** as targets in the dashboard (or `targets.yaml`). See [Story 3](#story-3--bot-still-running-after-gabagool22-stopped) below.
+> **Note:** Gabagool22 is no longer a reliable copy target. The videos remain proof of live production use-see [Story 3](#story-3--bot-still-running-after-gabagool22-stopped) for how we switched to active leaders.
 
 ### Video 1 - Live Copy Trading Run
 
@@ -94,112 +94,163 @@ Same session, same markets in the activity/history tabs (e.g. the temperature ma
 
 ---
 
-## 🆕 What's new
+## ⭐ Features
 
-Multi-wallet copy, web dashboard (`http://127.0.0.1:8787`), Polymarket Perps, lower-latency WebSocket path, optional exit mirroring (`copy_closes`), and Telegram alerts. The videos above are from **predictions**-start in `dry_run`, confirm **Activity**, then switch to `real`.
+The videos and stories above are **predictions** runs. This build adds a full platform on top of that core pipeline:
 
----
+- **Multi-wallet copy** - several leaders, each with its own sizing and cap
+- **Web dashboard** at `http://127.0.0.1:8787` - targets, activity, positions, settings
+- **Predictions + Perps** - one active venue at a time; switch from the dashboard
+- **WebSocket detection**, share batching, optional exit mirroring (`copy_closes`), Telegram alerts
+- **Dry-run mode** and persistent state (`state.json`, `history.db`)
 
-## ⭐ Why This Bot
-
-Live **video proof** and real stories-not screenshots. WebSocket detection, per-target sizing caps, share batching, dry-run mode, and a dashboard to swap targets when a leader goes quiet (see Story 3).
-
-| | This Bot | Typical alternatives |
-|---|----------|----------------------|
-| Live proof | ✅ Videos + stories | ❌ Claims only |
+| Feature | This Bot | Typical alternatives |
+|---------|----------|----------------------|
+| Live execution proof | ✅ Videos + stories above | ❌ Claims only |
 | Multi-wallet + dashboard | ✅ | ❌ Single address / CLI |
 | Perps + exit mirroring | ✅ | ❌ Predictions / entry only |
-| Survives inactive target | ✅ Swap in UI | ⚠️ Tied to one wallet |
+| Swap target when leader goes quiet | ✅ In UI | ⚠️ Tied to one wallet |
+| WebSocket + dry-run | ✅ | ⚠️ Polling / no simulation |
 
-**Good fit:** passive copy traders comfortable with Python 3.10+, on-chain risk, and monitoring **Activity**. **Not a fit:** guaranteed profits, simultaneous predictions + perps, or a public dashboard without `web.token`.
+**Good fit:** passive copy traders on **Python 3.10+** who will monitor **Activity**. **Not a fit:** guaranteed profits, simultaneous predictions + perps, or a public dashboard without `web.token`.
 
 ---
 
-**Jump to:** [Quick Start](#-quick-start) · [Configuration](#configuration) · [FAQ](#faq)
+**Jump to:** [Quick Start](#-quick-start) · [Dashboard](#-dashboard) · [Configuration](#configuration) · [FAQ](#faq)
 
 ## 🚀 Quick Start
 
-**Needs:** Python 3.10+, Polygon wallet + CLOB API (for `real` predictions), funded Perps account (for `real` perps). Node.js 18+ only if you rebuild the UI.
+### Prerequisites
+
+- **Python 3.10+**
+- **Polygon wallet** - USDC for predictions, POL/MATIC for gas (`mode: real`)
+- **Polymarket CLOB API credentials** - for live prediction-market orders
+- **Funded Perps account** - only when copying Perps in `real` mode
+- **Node.js 18+** - only if you rebuild the dashboard UI yourself
+
+### Install
 
 ```bash
 git clone https://github.com/dexorynlabs/polymarket-trading-bot-python.git
 cd polymarket-trading-bot-python
+
 pip install -r requirements.txt
-cp config.yaml.example config.yaml   # mode, web, polymarket secrets
+
+cp config.yaml.example config.yaml
+# Edit config.yaml: mode, web settings, polymarket secrets (real mode)
+
 python -m app.main
 ```
 
-1. Keep **`mode: dry_run`** until fills show in dashboard **Activity**
-2. Open **http://127.0.0.1:8787** → **Targets** → add wallet, venue (`predictions` | `perps`), sizing → **Start**
-3. Switch to **`mode: real`**, restart, and start again with small size
+### First run
 
-**Dashboard:** Overview, Targets, Activity, Positions, Settings (writes to `targets.yaml` / `settings.yaml`). Set `web.token` before exposing beyond localhost.
+1. Keep **`mode: dry_run`** in `config.yaml`
+2. Open **http://127.0.0.1:8787** → **Targets** → add wallet, venue, sizing → **Start**
+3. Confirm fills in **Activity**, then set **`mode: real`**, restart, and **Start** with small size
 
-**Perps:** set target `venue: perps`, fund on [polymarket.com](https://polymarket.com). One venue copies at a time-predictions **or** perps, not both.
+Build the UI from source (optional): `cd ui && npm install && npm run build` · see [`ui/README.md`](ui/README.md)
 
-UI rebuild (optional): `cd ui && npm install && npm run build` · see [`ui/README.md`](ui/README.md)
+**Help:** [@dexoryn](https://t.me/dexoryn) on Telegram.
 
-**Help:** [@dexoryn](https://t.me/dexoryn)
+---
+
+## 🖥 Dashboard
+
+Run the bot from the dashboard after the one-time `config.yaml` setup. Target edits save to `targets.yaml`; tuning saves to `settings.yaml`. Legacy single `target_wallet` configs auto-migrate on first launch.
+
+| Page | What you do there |
+|------|-------------------|
+| **Overview** | Copy status, active venue, latency snapshot |
+| **Targets** | Add, edit, enable, or pause leader wallets |
+| **Activity** | Live feed of detected fills and copy results |
+| **Positions** | Open exposure and remaining headroom |
+| **Settings** | Sizing, slippage, notifications |
+
+**Perps:** set target `venue: perps`, fund on [polymarket.com](https://polymarket.com). Portfolio changes are polled from the leader's public profile; orders are IOC limits at mark ± slippage.
+
+> **One venue at a time** - predictions or perps, not both. Keep `web.host: 127.0.0.1` unless you set `web.token`.
 
 ---
 
 ## Configuration
 
-Secrets and global mode in **`config.yaml`**. Targets and tuning in the **dashboard** (or `targets.yaml` / `settings.yaml`). Dashboard overrides matching config keys.
+| Layer | File | Use for |
+|-------|------|---------|
+| Bootstrap | `config.yaml` | `mode`, API secrets, web/Telegram, global defaults |
+| Runtime | `targets.yaml` | Leader wallets (managed in **Targets**) |
+| Runtime | `settings.yaml` | Trading tuning (managed in **Settings**) |
 
-| Key | Purpose |
-|-----|---------|
-| `mode` | `dry_run` or `real` |
-| `copy.venue` | `predictions` or `perps` |
-| `web.*` | Dashboard host, port, optional token |
-| `risk.max_open_usd_total` | Optional cap across prediction targets |
-| `execution.order_type` | `taker` (FAK) or `maker` (GTC) |
-| `slippage.entry_bps_max` | Max BUY slippage (bps) |
+Dashboard values override matching keys in `config.yaml`.
 
-For `mode: real`, fill `polymarket:` credentials. Per-target fields: `wallet`, `venue`, `enabled`, `copy_closes`, `sizing.*`. Legacy single `target_wallet` configs auto-migrate on first launch. Full reference: **`config.yaml.example`**.
+### Essential `config.yaml`
 
-Pick active traders on [polymarket.com](https://polymarket.com) and rotate when activity drops.
+| Setting | Description | Example |
+|---------|-------------|---------|
+| `mode` | `dry_run` simulates; `real` posts orders | `dry_run` |
+| `copy.venue` | Initial venue when copying starts | `predictions` |
+| `web.enabled` | Serve the dashboard | `true` |
+| `web.host` / `web.port` | Bind address | `127.0.0.1` / `8787` |
+| `web.token` | Optional dashboard auth | `""` |
+| `risk.max_open_usd_total` | Optional cap across prediction targets | `null` |
+| `execution.order_type` | `taker` (FAK) or `maker` (GTC) | `taker` |
+| `slippage.entry_bps_max` | Max slippage on BUY copies (bps) | `1000` |
+
+For `mode: real`, fill `polymarket:` (`private_key`, `wallet_address`, `api_key`, `api_secret`, `passphrase`). Per-target fields (`wallet`, `venue`, `enabled`, `copy_closes`, `sizing.*`) are set in the dashboard. Full reference: **`config.yaml.example`**.
 
 ---
 
-## Safety
+## Safety & Risk
 
-⚠️ **`mode: real` uses real funds.** Start dry-run, use a limited wallet, set per-target caps, check `logs/copybot.log` and **Activity**, never commit secrets. Past results do not guarantee future returns.
+⚠️ **`mode: real` uses real funds.** Use a dedicated wallet with limited balance, set conservative per-target caps, check `logs/copybot.log`, never commit secrets, and remember past performance does not guarantee future results.
 
 ---
 
 ## FAQ
 
-**Multiple wallets?** Yes on predictions (parallel, per-target caps). One venue active at a time.
+**Do I still need `config.yaml` if I use the dashboard?**  
+Yes - for `mode`, API secrets, and web/Telegram. Targets and day-to-day tuning live in the dashboard.
 
-**Target stopped trading?** Bot keeps running-no new copies until you enable an active target.
+**Where are logs and state stored?**  
+`logs/copybot.log`, `history.db`, `state.json`, and `settings.yaml` (gitignored except the example config).
 
-**Still need `config.yaml`?** Yes for mode, API secrets, web/Telegram. Targets live in the dashboard.
-
-**Logs?** `logs/copybot.log`, `history.db`, `state.json`, `settings.yaml`.
+**Is this open source?**  
+Yes. A maintained premium build with extra support is also available via Telegram.
 
 ---
 
 ## Author & Contact
 
-**Dexoryn Labs** · [@dexoryn](https://t.me/dexoryn) · Discord `dexoryn_` · [@dexoryn](https://x.com/dexoryn) · [@dexorynLabs](https://github.com/dexorynLabs)
+**Dexoryn Labs** - Polymarket copy-trading automation
+
+- **Telegram**: [@dexoryn](https://t.me/dexoryn) (fastest)
+- **Discord**: `dexoryn_`
+- **Twitter**: [@dexoryn](https://x.com/dexoryn)
+- **GitHub**: [@dexorynLabs](https://github.com/dexorynLabs)
+- **WeChat**: scan to add **DexorynWe**
 
 <p align="center">
-  <img src="public/dexoryn_tg.jpg" alt="Telegram QR - @dexoryn" height="220"/>
+  <img src="public/dexoryn_tg.jpg" alt="Telegram QR code - @dexoryn" height="260"/>
   &nbsp;&nbsp;
-  <img src="public/dexoryn_wechat.png" alt="WeChat QR - DexorynWe" height="220"/>
+  <img src="public/dexoryn_wechat.png" alt="WeChat QR code - DexorynWe" height="260"/>
 </p>
 
 ---
 
 ## Contributing
 
-Fork → branch → PR. Dev: `pip install -r requirements-dev.txt` && `pytest`.
+1. Fork the repo  
+2. `git checkout -b feature/your-feature`  
+3. Commit and push  
+4. Open a Pull Request  
+
+Dev: `pip install -r requirements-dev.txt` then `pytest`.
 
 ---
 
 ## Legal Disclaimer
 
-Trading on Polymarket involves **substantial risk of loss**. Dexoryn is not responsible for losses from using this software. **Only trade with funds you can afford to lose.**
+Trading on Polymarket involves **substantial risk of loss**. Dexoryn is not responsible for losses from using this software. You are solely responsible for wallet security, target selection, and capital at risk.
+
+**Only trade with funds you can afford to lose.**
 
 Questions: [@dexoryn](https://t.me/dexoryn) · ⭐ star the repo if it helps.
