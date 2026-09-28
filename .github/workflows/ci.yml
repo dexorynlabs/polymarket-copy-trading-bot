@@ -21,4 +21,4 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Verify imports
-        run: python -c "from app.core.poller import Poller; from app.core.trader import Trader; from app.pm.clob import ClobClient"
+        run: python -c "from app.core.poller import Poller; from app.core.trader import CopyTrader; from app.pm.clob import ClobClient"
