@@ -1,36 +1,47 @@
-"""Poller - WebSocket subscription to PM activity/trades, dedup, watchdog.
+"""Poller — WebSocket subscription to PM activity/trades, dedup, watchdog.
 
 Subscribes once to the global activity/trades stream and filters incoming
-events by `proxyWallet` to match the target. App-level `Text("PING")` heartbeat
-every 5s (matches PM convention). Fills are dispatched to a bounded asyncio
-Queue so the WS receive loop never blocks on `on_fill` (POST /order). PM WS
-connections become zombie after ~20 minutes of silence - the silent watchdog
-raises to force a supervisor restart.
+events by `proxyWallet` against the live set of watched wallets (one per
+prediction target). App-level `Text("PING")` heartbeat every 5s (matches PM
+convention). Matched fills are handed to a synchronous, non-blocking `on_fill`
+callback (PredictionsEngine.submit) that schedules execution as its own task,
+so the WS receive loop never waits on POST /order. PM WS connections become
+zombie after ~20 minutes of silence — the silent watchdog raises to force a
+supervisor restart.
 """
 
 import asyncio
 import contextlib
 import json
 import logging
+import re
 import time
 from collections import OrderedDict
-from typing import Awaitable, Callable
+from typing import Callable, Collection, Optional
 
 import aiohttp
+import orjson
 
+from app import events
 from app.core.trader import TargetFill
+from app.events import EventBus
+from app.targets import VENUE_PREDICTIONS
 
 
 WS_URL = "wss://ws-live-data.polymarket.com"
 PING_INTERVAL_S = 5             # app-level Text("PING") cadence
 RECONNECT_MIN_SLEEP_S = 1.0     # minimum delay between reconnects even on clean close
-FILL_QUEUE_MAX = 256            # bounded queue; overflow → drop + log
+
+# Pulls the trader's wallet straight out of the raw frame, so the (global)
+# firehose is filtered with one regex scan + set lookup — independent of how
+# many wallets are watched — and only matching rows reach the JSON decoder.
+_PROXY_WALLET_RE = re.compile(r'"proxyWallet"\s*:\s*"(0x[0-9a-fA-F]{40})"')
 
 log = logging.getLogger("poller")
 
 
 def _full_row_key(p: dict) -> str:
-    """Dedup key: tx_hash + asset + side + size + price (full row, not just tx_hash -
+    """Dedup key: tx_hash + asset + side + size + price (full row, not just tx_hash —
     one taker × N makers produces N rows sharing tx_hash but with different size/price)."""
     return f"{p.get('transactionHash','')}|{p.get('asset','')}|{p.get('side','')}|{p.get('size','')}|{p.get('price','')}"
 
@@ -70,30 +81,34 @@ class LRU:
 class Poller:
     """WebSocket poller for PM activity/trades stream."""
 
+    feed_id = "predictions-ws"
+    feed_label = "Predictions feed"
+
     def __init__(
         self,
         config: dict,
         session: aiohttp.ClientSession,
-        on_fill: Callable[[TargetFill], Awaitable[None]],
+        wallets: Collection[str],
+        on_fill: Callable[[TargetFill], None],
         state: dict,
+        bus: Optional[EventBus] = None,
     ):
         self.config = config
         self.session = session
+        # Live view of watched lowercase wallets (owned by PredictionsEngine).
+        self.wallets = wallets
         self.on_fill = on_fill
-        self.target = config["target_wallet"].lower()
+        self.bus = bus
 
         self.seen = LRU.from_list(state.get("seen_tx_keys", []), config["dedup"]["seen_cap"])
 
-        # Watchdog state - updated on every WS event (any message type), so we
-        # detect zombie connections even when the target isn't trading.
+        # Watchdog state — updated on every WS event (any message type), so we
+        # detect zombie connections even when no target is trading.
         self.last_event_ms = int(time.time() * 1000)
         self.consecutive_reconnect_errors = 0
+        self.connected = False
+        self.reconnects = 0
         self._state_dirty = False
-
-        # Fills queued from WS receive loop, drained by consumer task.
-        # Bounded - overflow is logged and dropped.
-        self._fill_queue: asyncio.Queue = asyncio.Queue(maxsize=FILL_QUEUE_MAX)
-        self._dropped_fills = 0
 
     # ── State ──
 
@@ -107,20 +122,18 @@ class Poller:
     def mark_clean(self) -> None:
         self._state_dirty = False
 
+    def feed_status(self) -> dict:
+        return {
+            "id": self.feed_id,
+            "label": self.feed_label,
+            "connected": self.connected,
+            "last_event_ms": self.last_event_ms,
+            "reconnects": self.reconnects,
+        }
+
     # ── Main run loop with reconnect ──
 
     async def run(self, shutdown: asyncio.Event) -> None:
-        # Start fill-queue consumer (separate from receive loop so on_fill
-        # latency doesn't block WS message processing).
-        consumer_task = asyncio.create_task(self._consumer_loop(shutdown), name="fill-consumer")
-        try:
-            await self._reconnect_loop(shutdown)
-        finally:
-            consumer_task.cancel()
-            with contextlib.suppress(asyncio.CancelledError):
-                await consumer_task
-
-    async def _reconnect_loop(self, shutdown: asyncio.Event) -> None:
         max_errs = self.config["watchdog"]["max_consecutive_errors"]
         while not shutdown.is_set():
             try:
@@ -146,13 +159,17 @@ class Poller:
                 if self.consecutive_reconnect_errors == max_errs:
                     log.error(
                         f"[WS] {self.consecutive_reconnect_errors} consecutive "
-                        f"failures (>= {max_errs}) - still retrying"
+                        f"failures (>= {max_errs}) — still retrying"
                     )
+                    self._emit_error(f"Predictions feed: {self.consecutive_reconnect_errors} consecutive failures: {e}")
                 try:
                     await asyncio.wait_for(shutdown.wait(), timeout=backoff_s)
                     return
                 except asyncio.TimeoutError:
                     pass
+            finally:
+                self.connected = False
+            self.reconnects += 1
 
     async def _run_connection(self, shutdown: asyncio.Event) -> None:
         log.info("Data stream connecting…")
@@ -165,7 +182,8 @@ class Poller:
                 "subscriptions": [{"topic": "activity", "type": "trades"}],
             }
             await ws.send_str(json.dumps(sub))
-            log.info(f"Subscribed target: {self.target}")
+            self.connected = True
+            log.info(f"Subscribed — watching {len(self.wallets)} wallet(s)")
             self.last_event_ms = int(time.time() * 1000)
 
             # App-level heartbeat: PM expects Text("PING"), not WS frame ping.
@@ -176,7 +194,7 @@ class Poller:
                         return
                     mt = msg.type
                     if mt == aiohttp.WSMsgType.TEXT:
-                        await self._handle_text(msg.data)
+                        self._handle_text(msg.data)
                     elif mt in (
                         aiohttp.WSMsgType.PING,
                         aiohttp.WSMsgType.PONG,
@@ -200,7 +218,7 @@ class Poller:
                     await ping_task
 
     async def _ping_loop(self, ws: aiohttp.ClientWebSocketResponse) -> None:
-        """App-level heartbeat - PM convention: send Text("PING") every 5s,
+        """App-level heartbeat — PM convention: send Text("PING") every 5s,
         server replies Text("PONG"). Loop exits when connection breaks."""
         while True:
             await asyncio.sleep(PING_INTERVAL_S)
@@ -211,18 +229,19 @@ class Poller:
 
     # ── Message handling (WS receive side) ──
 
-    async def _handle_text(self, raw: str) -> None:
+    def _handle_text(self, raw: str) -> None:
         # Any TEXT message counts as alive for watchdog.
         self.last_event_ms = int(time.time() * 1000)
 
-        # PM may send bare PING / PONG / empty keepalive strings - ignore.
-        stripped = raw.strip()
-        if stripped in ("PING", "PONG", "ping", "pong", ""):
+        match = _PROXY_WALLET_RE.search(raw)
+        if match is None or match.group(1).lower() not in self.wallets:
             return
 
         try:
-            data = json.loads(raw)
-        except json.JSONDecodeError:
+            data = orjson.loads(raw)
+        except orjson.JSONDecodeError:
+            return
+        if not isinstance(data, dict):
             return
 
         if data.get("topic") != "activity" or data.get("type") != "trades":
@@ -232,49 +251,43 @@ class Poller:
         # More accurate for lag measurement than payload.timestamp (sec).
         envelope_ts_ms = data.get("timestamp", 0)
 
-        payload = data.get("payload") or {}
-        wallet = (payload.get("proxyWallet") or "").lower()
-        if wallet != self.target:
-            return    # not our target
+        payload = data.get("payload")
+        if not isinstance(payload, dict):
+            return
+        wallet = str(payload.get("proxyWallet") or "").lower()
+        if wallet not in self.wallets:
+            return
 
         key = _full_row_key(payload)
         if key in self.seen:
             return    # already processed
 
+        try:
+            fill = self._parse_fill(payload, envelope_ts_ms)
+        except (TypeError, ValueError) as e:
+            log.warning(f"[WS] unparseable target row {key[:40]}…: {e}")
+            return
+
         self.seen.add(key)
         self._state_dirty = True
+        self._dispatch(fill)
 
-        fill = self._parse_fill(payload, envelope_ts_ms)
-        now_ms = int(time.time() * 1000)
-        lag_ms = (now_ms - fill.timestamp_ms) if fill.timestamp_ms > 0 else -1
+        lag_ms = (int(time.time() * 1000) - fill.timestamp_ms) if fill.timestamp_ms > 0 else -1
+        # ASCII-only on purpose: the Windows console is cp1252 and non-ASCII
+        # glyphs raise UnicodeEncodeError inside logging (a traceback per line).
         log.info(
-            f"[NEW] tx={fill.tx_hash[:10]}… {fill.side} asset={fill.asset[:12]}… "
-            f"size={fill.size:.2f} px={fill.price:.4f} lag={lag_ms}ms "
-            f"slug={fill.market_slug}"
+            f"[NEW] {wallet[:10]}... {fill.side} {fill.outcome or '?'} {fill.size:.2f}sh @ {fill.price:.4f} "
+            f"({int(round(fill.price * 100))}c) val=${fill.size * fill.price:.2f} lag={lag_ms}ms "
+            f'slug={fill.market_slug} title="{fill.title or fill.market_slug}" '
+            f"asset={fill.asset[:12]}... tx={fill.tx_hash[:10]}..."
         )
 
-        # Enqueue for the consumer task - never block the WS receive loop.
+    def _dispatch(self, fill: TargetFill) -> None:
+        # A handler bug must never tear down the WS connection.
         try:
-            self._fill_queue.put_nowait(fill)
-        except asyncio.QueueFull:
-            self._dropped_fills += 1
-            log.error(
-                f"[FILL-QUEUE-FULL] dropping fill tx={fill.tx_hash[:10]}… "
-                f"queue_size={self._fill_queue.qsize()} total_dropped={self._dropped_fills}"
-            )
-
-    async def _consumer_loop(self, shutdown: asyncio.Event) -> None:
-        """Drains the fill queue and calls on_fill - runs independently of
-        the WS receive loop so a slow POST /order doesn't block message read."""
-        while not shutdown.is_set():
-            try:
-                fill = await asyncio.wait_for(self._fill_queue.get(), timeout=1.0)
-            except asyncio.TimeoutError:
-                continue
-            try:
-                await self.on_fill(fill)
-            except Exception as e:
-                log.exception(f"on_fill handler raised: {e}")
+            self.on_fill(fill)
+        except Exception as e:
+            log.exception(f"on_fill dispatch raised tx={fill.tx_hash[:10]}…: {e}")
 
     @staticmethod
     def _parse_fill(p: dict, envelope_ts_ms: int) -> TargetFill:
@@ -291,7 +304,7 @@ class Poller:
             ts_ms = int(envelope_ts_ms or 0)
         except (TypeError, ValueError):
             ts_ms = 0
-        if ts_ms < 10**11:    # envelope absent or in seconds - fall back to payload
+        if ts_ms < 10**11:    # envelope absent or in seconds — fall back to payload
             ts_raw = p.get("timestamp", 0) or 0
             try:
                 ts_num = float(ts_raw)
@@ -303,11 +316,14 @@ class Poller:
             tx_hash=p.get("transactionHash", ""),
             asset=str(p.get("asset", "")),
             market_slug=p.get("slug", "") or p.get("eventSlug", ""),
-            side=(p.get("side") or "").upper(),
+            side=str(p.get("side") or "").upper(),
             size=float(p.get("size", 0) or 0),
             price=float(p.get("price", 0) or 0),
             price_str=str(p.get("price", "")),
             timestamp_ms=ts_ms,
+            outcome=str(p.get("outcome", "") or ""),
+            title=str(p.get("title", "") or ""),
+            wallet=str(p.get("proxyWallet") or "").lower(),
         )
 
     # ── Silent-freeze watchdog ──
@@ -315,11 +331,13 @@ class Poller:
     async def silent_watchdog(self, shutdown: asyncio.Event) -> None:
         """
         If no WS event arrives in N seconds, abort the bot. PM activity is a
-        global firehose - events flow continuously regardless of target's trading.
+        global firehose — events flow continuously regardless of targets' trading.
         Silence = zombie connection; raise to trigger graceful shutdown so a
         supervisor (systemd / operator) can restart with a fresh socket.
         """
         timeout_ms = self.config["watchdog"]["silent_timeout_s"] * 1000
+        # Copying may be (re)started long after the last event.
+        self.last_event_ms = int(time.time() * 1000)
         while not shutdown.is_set():
             try:
                 await asyncio.wait_for(shutdown.wait(), timeout=5)
@@ -330,7 +348,12 @@ class Poller:
             if silent_ms > timeout_ms:
                 msg = (
                     f"[WATCHDOG] No WS event in {silent_ms / 1000:.1f}s "
-                    f"(threshold {timeout_ms / 1000:.0f}s) - exiting for supervisor restart"
+                    f"(threshold {timeout_ms / 1000:.0f}s) — exiting for supervisor restart"
                 )
                 log.error(msg)
+                self._emit_error(msg)
                 raise RuntimeError(msg)
+
+    def _emit_error(self, message: str) -> None:
+        if self.bus is not None:
+            self.bus.emit(events.ERROR, message, level=events.ERROR_LEVEL, venue=VENUE_PREDICTIONS)
