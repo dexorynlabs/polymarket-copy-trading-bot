@@ -20,15 +20,17 @@ These sessions were recorded while **@gabagool22** was actively trading. They sh
 
 ### Video 1 - Live Copy Trading Run
 
-https://github.com/user-attachments/assets/2194ef92-b0f7-40e1-9835-4d2965e85e81
+https://github.com/user-attachments/assets/e62d908d-4dbd-4c7f-93a2-20879baed8da
 
 - **+$80 profit in ~15 minutes**
+
+
 - Bot ran unattended during this session
 - Real on-chain execution, not simulation
 
 ### Video 2 - Second run (confirmation)
 
-https://github.com/user-attachments/assets/df3a6791-89b5-4230-ae40-fb7130dcadc4
+https://github.com/user-attachments/assets/cb560ca9-343d-4d7d-9730-818636fdde73
 
 - **Additional +$230 profit in the next ~15 minutes**
 - Same bot, same logic, separate run
