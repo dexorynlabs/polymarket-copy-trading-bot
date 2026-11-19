@@ -15,7 +15,7 @@ git clone https://github.com/dexorynlabs/polymarket-copy-trading-bot.git
 cd polymarket-copy-trading-bot
 
 pip install -r requirements.txt
-pip install -r requirements-dev.txt
+pip install pytest
 
 cp config.yaml.example config.yaml
 pytest
